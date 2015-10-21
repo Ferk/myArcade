@@ -2,6 +2,9 @@
 -- Array to hold all the running game states
 mypacman.games = {}
 
+-- Duration of the power pellet effect (in seconds)
+local power_pellet_duration = 10
+
 ---------------------------------------------------------
 -- Public functions (these can be called from any other place)
 
@@ -49,6 +52,8 @@ end
 function mypacman.game_reset(id, player)
 	local gamestate = mypacman.games[id]
 	minetest.log("action", "resetting game " .. id)
+
+	gamestate.power_pellet = false
 
 	-- Position the player
 	local player = player or minetest.get_player_by_name(gamestate.player_name)
@@ -117,7 +122,27 @@ function mypacman.on_player_got_pellet(player)
 			minetest.sound_play("mypacman_beginning", {pos = pos,max_hear_distance = 40,gain = 10.0,})
 		end)
 	end
+end
 
+-- A player got a power pellet, update the state
+function mypacman.on_player_got_power_pellet(player)
+	local name = player:get_player_name()
+	local gamestate = mypacman.get_game_by_player(name)
+	if not gamestate then return end
+
+	minetest.chat_send_player(name, "You got a POWER PELLET")
+	gamestate.power_pellet = os.time() + power_pellet_duration
+
+	local boardcenter = vector.add(gamestate.pos, {x=13,y=0.5,z=15})
+	local powersound = minetest.sound_play("mypacman_beginning", {pos = boardcenter,max_hear_distance = 20, object=player, loop=true})
+
+	minetest.after(power_pellet_duration, function()
+		if os.time() >= (gamestate.power_pellet or 0) then
+			gamestate.power_pellet = false
+			minetest.chat_send_player(name, "POWER PELLET wore off")
+			minetest.sound_stop(powersound)
+		end
+	end)
 end
 
 -- Get the game that the given player is playing

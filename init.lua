@@ -64,7 +64,9 @@ minetest.register_node("mypacman:pellet_2", {
 			{-0.6875, -0.1875, -0.1875, -0.3125, 0.1875, 0.1875},
 			}
 		},
-	on_destruct = function(pos)
+	after_dig_node = function(pos, oldnode, oldmetadata, digger)
+		mypacman.on_player_got_power_pellet(digger)
+
 		minetest.sound_play("mypacman_eatfruit", {
 			pos = pos,
 			max_hear_distance = 100,

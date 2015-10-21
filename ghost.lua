@@ -1,4 +1,7 @@
 
+local ghosts_death_delay = 5
+
+
 local ghosts = {
 	{"pinky","Pinky"},
 	{"inky","Inky"},
@@ -59,23 +62,38 @@ for i in ipairs(ghosts) do
 
 			local s = self.object:getpos() -- ghost
 			local p = player:getpos() -- player
-
+			print(dump(gamestate))
 			 -- find distance from ghost to player
 			local distance = ((p.x-s.x)^2 + (p.y-s.y)^2 + (p.z-s.z)^2)^0.5
 			if distance < 1.5 then
-				-- player is so close it got catched!!
-				gamestate.lives = gamestate.lives - 1
-				if gamestate.lives < 1 then
-					minetest.chat_send_player(gamestate.player_name,"Game Over")
-					player:moveto(vector.add(gamestate.pos,{x=0.5,y=0.5,z=-1.5}))
-					mypacman.game_end(self.gameid)
+				-- player touches ghost!!
 
-				elseif gamestate.lives == 1 then
-					minetest.chat_send_player(gamestate.player_name,"This is your last life")
-					mypacman.game_reset(self.gameid, player)
+				if gamestate.power_pellet then
+					-- Player eats ghost! move it to spawn
+					local ghost_spawn = vector.add(gamestate.pos, {x=13,y=0.5,z=19})
+					self.object:setpos(ghost_spawn)
+					-- set the timer negative so it'll have to wait extra time
+					self.timer = -ghosts_death_delay
+					-- play sound and reward player
+					minetest.sound_play("mypacman_eatfruit", {pos = p,
+						max_hear_distance = 6, gain = 10.0,
+					})
+					player:get_inventory():add_item('main', 'mypacman:cherrys')
 				else
-					minetest.chat_send_player(gamestate.player_name,"You have ".. gamestate.lives .." lives left")
-					mypacman.game_reset(self.gameid, player)
+					-- Ghost catches the player!
+					gamestate.lives = gamestate.lives - 1
+					if gamestate.lives < 1 then
+						minetest.chat_send_player(gamestate.player_name,"Game Over")
+						player:moveto(vector.add(gamestate.pos,{x=0.5,y=0.5,z=-1.5}))
+						mypacman.game_end(self.gameid)
+
+					elseif gamestate.lives == 1 then
+						minetest.chat_send_player(gamestate.player_name,"This is your last life")
+						mypacman.game_reset(self.gameid, player)
+					else
+						minetest.chat_send_player(gamestate.player_name,"You have ".. gamestate.lives .." lives left")
+						mypacman.game_reset(self.gameid, player)
+					end
 				end
 
 			else
@@ -84,9 +102,13 @@ for i in ipairs(ghosts) do
 				if p.x > s.x then
 					yaw = yaw + math.pi
 				end
-				-- face player and move towards him
+				-- face player and move backwards/forwards
 				self.object:setyaw(yaw)
-				self.set_velocity(self, gamestate.speed)
+				if gamestate.power_pellet then
+					self.set_velocity(self, -gamestate.speed) --negative velocity
+				else
+					self.set_velocity(self, gamestate.speed)
+				end
 			end
 		end,
 
