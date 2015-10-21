@@ -53,7 +53,11 @@ function mypacman.game_reset(id, player)
 	local gamestate = mypacman.games[id]
 	minetest.log("action", "resetting game " .. id)
 
+	-- Save the time when the game was last resetted (to solve timing issues)
+	local last_reset = os.time()
+
 	gamestate.power_pellet = false
+	gamestate.last_reset = last_reset
 
 	-- Position the player
 	local player = player or minetest.get_player_by_name(gamestate.player_name)
@@ -61,24 +65,32 @@ function mypacman.game_reset(id, player)
 
 	-- Spawn the ghosts and assign the game id to each ghost
 	minetest.after(2, function()
-		local pos = vector.add(gamestate.pos, {x=13,y=0.5,z=19})
-		local ghost = minetest.add_entity(pos, "mypacman:inky")
-		ghost:get_luaentity().gameid = id
+		if mypacman.games[id] and last_reset == mypacman.games[id].last_reset then
+			local pos = vector.add(gamestate.pos, {x=13,y=0.5,z=19})
+			local ghost = minetest.add_entity(pos, "mypacman:inky")
+			ghost:get_luaentity().gameid = id
+		end
 	end)
 	minetest.after(12, function()
-		local pos = vector.add(gamestate.pos, {x=15,y=0.5,z=19})
-		local ghost = minetest.add_entity(pos, "mypacman:pinky")
-		ghost:get_luaentity().gameid = id
+		if mypacman.games[id] and last_reset == mypacman.games[id].last_reset then
+			local pos = vector.add(gamestate.pos, {x=15,y=0.5,z=19})
+			local ghost = minetest.add_entity(pos, "mypacman:pinky")
+			ghost:get_luaentity().gameid = id
+		end
 	end)
 	minetest.after(22, function()
-		local pos = vector.add(gamestate.pos, {x=13,y=0.5,z=18})
-		local ghost = minetest.add_entity(pos, "mypacman:blinky")
-		ghost:get_luaentity().gameid = id
+		if mypacman.games[id] and last_reset == mypacman.games[id].last_reset then
+			local pos = vector.add(gamestate.pos, {x=13,y=0.5,z=18})
+			local ghost = minetest.add_entity(pos, "mypacman:blinky")
+			ghost:get_luaentity().gameid = id
+		end
 	end)
 	minetest.after(32, function()
-		local pos = vector.add(gamestate.pos, {x=15,y=0.5,z=18})
-		local ghost = minetest.add_entity(pos, "mypacman:clyde")
-		ghost:get_luaentity().gameid = id
+		if mypacman.games[id] and last_reset == mypacman.games[id].last_reset then
+			local pos = vector.add(gamestate.pos, {x=15,y=0.5,z=18})
+			local ghost = minetest.add_entity(pos, "mypacman:clyde")
+			ghost:get_luaentity().gameid = id
+		end
 	end)
 end
 
@@ -193,3 +205,19 @@ minetest.register_globalstep(function(dtime)
 		gamestate_save()
 	end
 end)
+
+-- Chatcommand to end the game for the current player
+minetest.register_chatcommand("mypacman_exit", {
+	params = "",
+	description = "Loads and saves all rooms",
+	func = function(name, param)
+		local gamestate = mypacman.get_game_by_player(name)
+		if gamestate then
+			mypacman.game_end(gamestate.id)
+			minetest.get_player_by_name(name):moveto(vector.add(gamestate.pos,{x=0.5,y=0.5,z=-1.5}))
+			minetest.chat_send_player(name, "You are no longer playing pacman")
+		else
+			minetest.chat_send_player(name, "You are not currently in a pacman game")
+		end
+	end
+})

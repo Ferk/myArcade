@@ -49,9 +49,19 @@ for i in ipairs(ghosts) do
 			-- Do we have game state? if not just die
 			local gamestate = mypacman.games[self.gameid]
 			if not gamestate then
-				minetest.log("action", "Removing pacman ghost from finished game " .. (self.gameid or ""))
+				minetest.log("action", "Removing pacman ghost without game assigned")
 				self.object:remove()
 				return
+			end
+			-- Make sure we are in the right state by keeping track of the reset time
+			-- if the reset time changed it's likely the game got resetted while the entity wasn't loaded
+			if self.last_reset then
+				if self.last_reset ~= gamestate.last_reset then
+					minetest.log("action", "Removing pacman ghost remaining after reset ")
+					self.object:remove()
+				end
+			else
+				self.last_reset = gamestate.last_reset
 			end
 
 			-- Make sure we have a targetted player
@@ -62,7 +72,7 @@ for i in ipairs(ghosts) do
 
 			local s = self.object:getpos() -- ghost
 			local p = player:getpos() -- player
-			print(dump(gamestate))
+
 			 -- find distance from ghost to player
 			local distance = ((p.x-s.x)^2 + (p.y-s.y)^2 + (p.z-s.z)^2)^0.5
 			if distance < 1.5 then
@@ -114,13 +124,17 @@ for i in ipairs(ghosts) do
 
 		-- This function should return the saved state of the entity in a string
 		get_staticdata = function(self)
-			return self.gameid or ""
+			return (self.gameid or "") .. ";" .. (self.last_reset or "")
 		end,
 
 		-- This function should load the saved state of the entity from a string
 		on_activate = function(self, staticdata)
 			if staticdata and staticdata ~= "" then
-				self.gameid = staticdata
+				local data = string.split(staticdata, ";")
+				if #data == 2 then
+					self.gameid = data[1]
+					self.last_reset = tonumber(data[2])
+				end
 			end
 		end
 	})
