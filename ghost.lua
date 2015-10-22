@@ -69,6 +69,12 @@ for i in ipairs(ghosts) do
 			end
 			local player = self.target
 
+			-- If there's no player just stop
+			if not player then
+				self.set_velocity(self, 0)
+				return
+			end
+
 			local s = self.object:getpos() -- ghost
 			local p = player:getpos() -- player
 
