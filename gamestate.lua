@@ -2,6 +2,9 @@
 -- Array to hold all the running game states
 mypacman.games = {}
 
+-- Store all the currently playing players
+mypacman.players = {}
+
 -- Duration of the power pellet effect (in seconds)
 local power_pellet_duration = 10
 
@@ -31,6 +34,8 @@ function mypacman.game_start(pos, player)
 		score = 0,
 	}
  	mypacman.games[id] = gamestate
+	mypacman.players[id] = player
+
 	minetest.log("action","New pacman game started at " .. id .. " by " .. gamestate.player_name)
 
 	-- place schematic
@@ -45,8 +50,10 @@ end
 -- Finish the game with the given id
 function mypacman.game_end(id)
 	mypacman.remove_ghosts(id)
+	mypacman.remove_hud(mypacman.players[id], mypacman.games[id].player_name)
 	-- Clear the data
 	mypacman.games[id] = nil
+	mypacman.players[id] = nil
 end
 
 -- Resets the game to the start positions
@@ -117,7 +124,8 @@ function mypacman.on_player_got_pellet(player)
 
 	gamestate.pellet_count = gamestate.pellet_count + 1
 	gamestate.score = gamestate.score + 10
-	minetest.chat_send_player(name, "Your score is "..gamestate.score)
+	mypacman.update_hud(gamestate.id, player)
+
 	if gamestate.pellet_count >= 252 then -- 252
 		minetest.chat_send_player(name, "You cleared the board!")
 
@@ -148,7 +156,7 @@ function mypacman.on_player_got_power_pellet(player)
 	minetest.chat_send_player(name, "You got a POWER PELLET")
 	gamestate.power_pellet = os.time() + power_pellet_duration
 	gamestate.score = gamestate.score + 50
-	minetest.chat_send_player(name, "Your score is "..gamestate.score)
+	mypacman.update_hud(gamestate.id, player)
 
 	local boardcenter = vector.add(gamestate.pos, {x=13,y=0.5,z=15})
 	local powersound = minetest.sound_play("mypacman_powerup", {pos = boardcenter,max_hear_distance = 20, object=player, loop=true})
@@ -195,19 +203,73 @@ local function gamestate_load()
 	end
 end
 
+-- Called every 0.5 seconds for each player that is currently playing pacman
+local function on_player_gamestep(player, gameid)
+	local player_pos = player:getpos()
+	local positions = {
+		{x=0.5,y=0.5,z=0.5},
+		{x=-0.5,y=0.5,z=-0.5},
+	}
+	for _,pos in pairs(positions) do
+		pos = vector.add(player_pos, pos)
+		local node = minetest.get_node(pos)
+		if node.name == "mypacman:pellet_1" then
+			minetest.remove_node(pos)
+			mypacman.on_player_got_pellet(player)
+		elseif node.name == "mypacman:pellet_2" then
+			minetest.remove_node(pos)
+			mypacman.on_player_got_power_pellet(player)
+
+			minetest.sound_play("mypacman_eatfruit", {
+				pos = pos,
+				max_hear_distance = 100,
+				gain = 10.0,
+			})
+		end
+	end
+end
+
 -------------------
 --- Execution code
 
 -- load the gamestate from disk
 mypacman.games = gamestate_load() or {}
 
-local tmr = 0
---Save Table every 10 seconds
+-- Time counters
+local tmr_gamestep = 0
+local tmr_savestep = 0
 minetest.register_globalstep(function(dtime)
-	tmr = tmr + dtime;
-	if tmr >= 10 then
-		tmr = 0
-		gamestate_save()
+	tmr_gamestep = tmr_gamestep + dtime;
+	if tmr_gamestep > 0.2 then
+		for id,player in pairs(mypacman.players) do
+			on_player_gamestep(player, id)
+		end
+		tmr_savestep = tmr_savestep + tmr_gamestep
+		if tmr_savestep > 10 then
+			gamestate_save()
+			tmr_savestep = 0
+		end
+		tmr_gamestep = 0
+	end
+end)
+
+minetest.register_on_joinplayer(function(player)
+	local name = player:get_player_name()
+	for id,game in pairs(mypacman.games) do
+		if game.player_name == name then
+			mypacman.players[id] = player
+			mypacman.update_hud(id, player)
+		end
+	end
+end)
+
+minetest.register_on_leaveplayer(function(player)
+	local name = player:get_player_name()
+	for id,game in pairs(mypacman.games) do
+		if game.player_name == name then
+			mypacman.players[id] = nil
+			mypacman.remove_hud(player, name)
+		end
 	end
 end)
 
