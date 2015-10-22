@@ -28,6 +28,7 @@ function mypacman.game_start(pos, player)
 		level = 1,
 		speed = 2,
 		lives = 3,
+		score = 0,
 	}
  	mypacman.games[id] = gamestate
 	minetest.log("action","New pacman game started at " .. id .. " by " .. gamestate.player_name)
@@ -115,7 +116,9 @@ function mypacman.on_player_got_pellet(player)
 	if not gamestate then return end
 
 	gamestate.pellet_count = gamestate.pellet_count + 1
-	if gamestate.pellet_count >= 20 then -- 252
+	gamestate.score = gamestate.score + 10
+	minetest.chat_send_player(name, "Your score is "..gamestate.score)
+	if gamestate.pellet_count >= 252 then -- 252
 		minetest.chat_send_player(name, "You cleared the board!")
 
 		mypacman.remove_ghosts(gamestate.id)
@@ -144,9 +147,11 @@ function mypacman.on_player_got_power_pellet(player)
 
 	minetest.chat_send_player(name, "You got a POWER PELLET")
 	gamestate.power_pellet = os.time() + power_pellet_duration
+	gamestate.score = gamestate.score + 50
+	minetest.chat_send_player(name, "Your score is "..gamestate.score)
 
 	local boardcenter = vector.add(gamestate.pos, {x=13,y=0.5,z=15})
-	local powersound = minetest.sound_play("mypacman_beginning", {pos = boardcenter,max_hear_distance = 20, object=player, loop=true})
+	local powersound = minetest.sound_play("mypacman_powerup", {pos = boardcenter,max_hear_distance = 20, object=player, loop=true})
 
 	minetest.after(power_pellet_duration, function()
 		if os.time() >= (gamestate.power_pellet or 0) then

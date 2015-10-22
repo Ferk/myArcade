@@ -28,7 +28,8 @@ for i in ipairs(ghosts) do
 		},
 		groups = {immortal = 1},
 		velocity = {x=math.random(-1,1), y=0, z=math.random(-1,1)},
-		collisionbox = {-0.25, -1.0, -0.25, 0.25, 0.48, 0.25},
+		collisionbox = {-0.01, -0.5, -0.01, 0.01, -0.49, 0.01},
+		--collisionbox = {-0.25, -1.0, -0.25, 0.25, 0.48, 0.25},
 		is_visible = true,
 		automatic_rotate = true,
 		automatic_face_movement_dir = -90, -- set yaw direction in degrees, false to disable
@@ -96,6 +97,7 @@ for i in ipairs(ghosts) do
 						minetest.chat_send_player(gamestate.player_name,"Game Over")
 						player:moveto(vector.add(gamestate.pos,{x=0.5,y=0.5,z=-1.5}))
 						mypacman.game_end(self.gameid)
+						minetest.sound_play("mypacman_death", {pos = boardcenter,max_hear_distance = 20, object=player, loop=false})
 
 					elseif gamestate.lives == 1 then
 						minetest.chat_send_player(gamestate.player_name,"This is your last life")

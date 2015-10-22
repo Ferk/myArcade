@@ -1,7 +1,7 @@
 local sbox =  {
 		type = "fixed",
 		fixed = {
-			{0, 0, 0, 0, 0, 0}
+			{-0.5, -0.5, -0.0625, 0.5, 0.5, 0.0625}
 		}
 	}
 local cbox =  {
@@ -40,7 +40,7 @@ minetest.register_node("mypacman:"..itm, {
 	paramtype2 = "facedir",
 	light_source = lit,
 	walkable = tf,
-	groups = {disable_jump = 1, not_in_creative_inventory = 1},
+	groups = {disable_jump = 1, immortal=1, not_in_creative_inventory = 1},
 	selection_box = sbox,
 	collision_box = cbox,
 
@@ -53,7 +53,7 @@ minetest.register_node("mypacman:glass", {
 	drawtype = "glasslike",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky=3,not_in_creative_inventory = 1},
+	groups = {immortal=1,not_in_creative_inventory = 1},
 	selection_box = cbox,
 	collision_box = cbox,
 
@@ -65,7 +65,7 @@ minetest.register_node("mypacman:glassw", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	walkable = false,
-	groups = {cracky=3,not_in_creative_inventory = 1},
+	groups = {immortal=1,not_in_creative_inventory = 1},
 	selection_box = cbox,
 	colision_box = cbox,
 
