@@ -50,6 +50,7 @@ end
 -- Finish the game with the given id
 function mypacman.game_end(id)
 	mypacman.remove_ghosts(id)
+	mypacman.remove_hud(mypacman.players[id], mypacman.games[id].player_name)
 	-- Clear the data
 	mypacman.games[id] = nil
 	mypacman.players[id] = nil
@@ -123,7 +124,8 @@ function mypacman.on_player_got_pellet(player)
 
 	gamestate.pellet_count = gamestate.pellet_count + 1
 	gamestate.score = gamestate.score + 10
-	minetest.chat_send_player(name, "Your score is "..gamestate.score)
+	mypacman.update_hud(gamestate.id, player)
+
 	if gamestate.pellet_count >= 252 then -- 252
 		minetest.chat_send_player(name, "You cleared the board!")
 
@@ -154,7 +156,7 @@ function mypacman.on_player_got_power_pellet(player)
 	minetest.chat_send_player(name, "You got a POWER PELLET")
 	gamestate.power_pellet = os.time() + power_pellet_duration
 	gamestate.score = gamestate.score + 50
-	minetest.chat_send_player(name, "Your score is "..gamestate.score)
+	mypacman.update_hud(gamestate.id, player)
 
 	local boardcenter = vector.add(gamestate.pos, {x=13,y=0.5,z=15})
 	local powersound = minetest.sound_play("mypacman_powerup", {pos = boardcenter,max_hear_distance = 20, object=player, loop=true})
@@ -256,6 +258,7 @@ minetest.register_on_joinplayer(function(player)
 	for id,game in pairs(mypacman.games) do
 		if game.player_name == name then
 			mypacman.players[id] = player
+			mypacman.update_hud(id, player)
 		end
 	end
 end)
@@ -265,6 +268,7 @@ minetest.register_on_leaveplayer(function(player)
 	for id,game in pairs(mypacman.games) do
 		if game.player_name == name then
 			mypacman.players[id] = nil
+			mypacman.remove_hud(player, name)
 		end
 	end
 end)

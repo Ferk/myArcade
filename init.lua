@@ -8,6 +8,7 @@ dofile(minetest.get_modpath("mypacman").."/ghost.lua")
 dofile(minetest.get_modpath("mypacman").."/blocks.lua")
 dofile(minetest.get_modpath("mypacman").."/portals.lua")
 dofile(minetest.get_modpath("mypacman").."/gamestate.lua")
+dofile(minetest.get_modpath("mypacman").."/scorehud.lua")
 
 
 --Yellow Pellets
