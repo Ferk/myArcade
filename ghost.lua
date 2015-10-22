@@ -26,10 +26,8 @@ for i in ipairs(ghosts) do
 			"mypacman_"..itm.."f.png",
 			"mypacman_"..itm.."s.png",
 		},
-		groups = {immortal = 1},
 		velocity = {x=math.random(-1,1), y=0, z=math.random(-1,1)},
-		collisionbox = {-0.01, -0.5, -0.01, 0.01, -0.49, 0.01},
-		--collisionbox = {-0.25, -1.0, -0.25, 0.25, 0.48, 0.25},
+		collisionbox = {-0.25, -1.0, -0.25, 0.25, 0.48, 0.25},
 		is_visible = true,
 		automatic_rotate = true,
 		automatic_face_movement_dir = -90, -- set yaw direction in degrees, false to disable
@@ -131,6 +129,7 @@ for i in ipairs(ghosts) do
 
 		-- This function should load the saved state of the entity from a string
 		on_activate = function(self, staticdata)
+			self.object:set_armor_groups({immortal=1})
 			if staticdata and staticdata ~= "" then
 				local data = string.split(staticdata, ";")
 				if #data == 2 then
