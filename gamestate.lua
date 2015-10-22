@@ -44,6 +44,7 @@ function mypacman.game_start(pos, player)
 
 	-- Set start positions
 	mypacman.game_reset(id, player)
+	mypacman.update_hud(id, player)
 	minetest.sound_play("mypacman_beginning", {pos = pos,max_hear_distance = 40,gain = 10.0,})
 end
 

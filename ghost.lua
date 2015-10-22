@@ -90,10 +90,9 @@ for i in ipairs(ghosts) do
 					-- set the timer negative so it'll have to wait extra time
 					self.timer = -ghosts_death_delay
 					-- play sound and reward player
-					minetest.sound_play("mypacman_eatfruit", {pos = p,
-						max_hear_distance = 6, gain = 10.0,
-					})
+					minetest.sound_play("mypacman_eatghost", {pos = boardcenter,max_hear_distance = 6, object=player, loop=false})
 					player:get_inventory():add_item('main', 'mypacman:cherrys')
+					mypacman.update_hud(self.gameid, player)
 				else
 					-- Ghost catches the player!
 					gamestate.lives = gamestate.lives - 1
