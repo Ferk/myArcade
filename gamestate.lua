@@ -2,6 +2,9 @@
 -- Array to hold all the running game states
 mypacman.games = {}
 
+-- Store all the currently playing players
+mypacman.players = {}
+
 -- Duration of the power pellet effect (in seconds)
 local power_pellet_duration = 10
 
@@ -31,6 +34,8 @@ function mypacman.game_start(pos, player)
 		score = 0,
 	}
  	mypacman.games[id] = gamestate
+	mypacman.players[id] = player
+
 	minetest.log("action","New pacman game started at " .. id .. " by " .. gamestate.player_name)
 
 	-- place schematic
@@ -47,6 +52,7 @@ function mypacman.game_end(id)
 	mypacman.remove_ghosts(id)
 	-- Clear the data
 	mypacman.games[id] = nil
+	mypacman.players[id] = nil
 end
 
 -- Resets the game to the start positions
@@ -195,19 +201,69 @@ local function gamestate_load()
 	end
 end
 
+-- Called every 0.5 seconds for each player that is currently playing pacman
+local function on_player_gamestep(player, gameid)
+	local player_pos = player:getpos()
+	local pos = {
+		x = math.floor(player_pos.x + 0.5),
+		y = math.floor(player_pos.y + 0.5),
+		z = math.floor(player_pos.z + 0.5),
+	}
+	local node = minetest.get_node(pos)
+	if node.name == "mypacman:pellet_1" then
+		minetest.remove_node(pos)
+		mypacman.on_player_got_pellet(player)
+	elseif node.name == "mypacman:pellet_2" then
+		minetest.remove_node(pos)
+		mypacman.on_player_got_power_pellet(player)
+
+		minetest.sound_play("mypacman_eatfruit", {
+			pos = pos,
+			max_hear_distance = 100,
+			gain = 10.0,
+		})
+	end
+end
+
 -------------------
 --- Execution code
 
 -- load the gamestate from disk
 mypacman.games = gamestate_load() or {}
 
-local tmr = 0
---Save Table every 10 seconds
+-- Time counters
+local tmr_gamestep = 0
+local tmr_savestep = 0
 minetest.register_globalstep(function(dtime)
-	tmr = tmr + dtime;
-	if tmr >= 10 then
-		tmr = 0
-		gamestate_save()
+	tmr_gamestep = tmr_gamestep + dtime;
+	if tmr_gamestep > 0.2 then
+		for id,player in pairs(mypacman.players) do
+			on_player_gamestep(player, id)
+		end
+		tmr_savestep = tmr_savestep + tmr_gamestep
+		if tmr_savestep > 10 then
+			gamestate_save()
+			tmr_savestep = 0
+		end
+		tmr_gamestep = 0
+	end
+end)
+
+minetest.register_on_joinplayer(function(player)
+	local name = player:get_player_name()
+	for id,game in pairs(mypacman.games) do
+		if game.player_name == name then
+			mypacman.players[id] = player
+		end
+	end
+end)
+
+minetest.register_on_leaveplayer(function(player)
+	local name = player:get_player_name()
+	for id,game in pairs(mypacman.games) do
+		if game.player_name == name then
+			mypacman.players[id] = nil
+		end
 	end
 end)
 
