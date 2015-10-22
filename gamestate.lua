@@ -204,24 +204,26 @@ end
 -- Called every 0.5 seconds for each player that is currently playing pacman
 local function on_player_gamestep(player, gameid)
 	local player_pos = player:getpos()
-	local pos = {
-		x = math.floor(player_pos.x + 0.5),
-		y = math.floor(player_pos.y + 0.5),
-		z = math.floor(player_pos.z + 0.5),
+	local positions = {
+		{x=0.5,y=0.5,z=0.5},
+		{x=-0.5,y=0.5,z=-0.5},
 	}
-	local node = minetest.get_node(pos)
-	if node.name == "mypacman:pellet_1" then
-		minetest.remove_node(pos)
-		mypacman.on_player_got_pellet(player)
-	elseif node.name == "mypacman:pellet_2" then
-		minetest.remove_node(pos)
-		mypacman.on_player_got_power_pellet(player)
+	for _,pos in pairs(positions) do
+		pos = vector.add(player_pos, pos)
+		local node = minetest.get_node(pos)
+		if node.name == "mypacman:pellet_1" then
+			minetest.remove_node(pos)
+			mypacman.on_player_got_pellet(player)
+		elseif node.name == "mypacman:pellet_2" then
+			minetest.remove_node(pos)
+			mypacman.on_player_got_power_pellet(player)
 
-		minetest.sound_play("mypacman_eatfruit", {
-			pos = pos,
-			max_hear_distance = 100,
-			gain = 10.0,
-		})
+			minetest.sound_play("mypacman_eatfruit", {
+				pos = pos,
+				max_hear_distance = 100,
+				gain = 10.0,
+			})
+		end
 	end
 end
 
