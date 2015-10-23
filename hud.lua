@@ -38,5 +38,6 @@ function mypacman.remove_hud(player, playername)
 	local hud = hud_table[name]
 	if hud then
 		player:hud_remove(hud)
+		hud_table[name] = nil
 	end
 end
