@@ -289,3 +289,8 @@ minetest.register_chatcommand("mypacman_exit", {
 		end
 	end
 })
+
+minetest.register_on_shutdown(function()
+	minetest.log("action", "Server shuts down. Saving pacman data")
+	gamestate_save()
+end)
