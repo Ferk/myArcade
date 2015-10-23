@@ -92,7 +92,6 @@ for i in ipairs(ghosts) do
 					-- play sound and reward player
 					minetest.sound_play("mypacman_eatghost", {pos = boardcenter,max_hear_distance = 6, object=player, loop=false})
 					player:get_inventory():add_item('main', 'mypacman:cherrys')
-					mypacman.update_hud(self.gameid, player)
 				else
 					-- Ghost catches the player!
 					gamestate.lives = gamestate.lives - 1
@@ -110,6 +109,7 @@ for i in ipairs(ghosts) do
 						mypacman.game_reset(self.gameid, player)
 					end
 				end
+				mypacman.update_hud(self.gameid, player)
 
 			else
 				local vec = {x=p.x-s.x, y=p.y-s.y, z=p.z-s.z}
