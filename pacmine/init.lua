@@ -1,18 +1,21 @@
 
 -- This variable will be exported to other mods when they "depend" on this mod
-mypacman = {}
+pacmine = {}
 
 
-dofile(minetest.get_modpath("mypacman").."/craftitems.lua")
-dofile(minetest.get_modpath("mypacman").."/ghost.lua")
-dofile(minetest.get_modpath("mypacman").."/blocks.lua")
-dofile(minetest.get_modpath("mypacman").."/portals.lua")
-dofile(minetest.get_modpath("mypacman").."/gamestate.lua")
-dofile(minetest.get_modpath("mypacman").."/hud.lua")
+dofile(minetest.get_modpath("pacmine").."/craftitems.lua")
+dofile(minetest.get_modpath("pacmine").."/ghost.lua")
+dofile(minetest.get_modpath("pacmine").."/blocks.lua")
+dofile(minetest.get_modpath("pacmine").."/portals.lua")
+dofile(minetest.get_modpath("pacmine").."/gamestate.lua")
+dofile(minetest.get_modpath("pacmine").."/hud.lua")
 
 
 --Yellow Pellets
-minetest.register_node("mypacman:pellet_1", {
+minetest.register_alias("mypacman:pellet_1", "pacmine:pellet_1")
+minetest.register_alias("mypacman:pellet_2", "pacmine:pellet_2")
+minetest.register_alias("mypacman:block2", "pacmine:block2")
+minetest.register_node("pacmine:pellet_1", {
 	description = "Pellet 1",
 	tiles = {"wool_yellow.png"},
 	drawtype = "nodebox",
@@ -29,19 +32,19 @@ minetest.register_node("mypacman:pellet_1", {
 		}
 	},
 	on_destruct = function(pos)
-		minetest.sound_play("mypacman_chomp", {
+		minetest.sound_play("pacmine_chomp", {
 			pos = pos,
 			max_hear_distance = 100,
 			gain = 10.0,
 		})
 	end,
 	after_dig_node = function(pos, oldnode, oldmetadata, digger)
-		mypacman.on_player_got_pellet(digger)
+		pacmine.on_player_got_pellet(digger)
 	end,
 })
 
 --Power Pellets. Need to make these do something
-minetest.register_node("mypacman:pellet_2", {
+minetest.register_node("pacmine:pellet_2", {
 	description = "Pellet 2",
 	tiles = {"wool_yellow.png^[colorize:white:140"},
 	drawtype = "nodebox",
@@ -50,10 +53,10 @@ minetest.register_node("mypacman:pellet_2", {
 	walkable = false,
 	light_source = 11,
 	drop = {max_items = 1,items = {
-		{items = {"mypacman:cherrys"},rarity = 4,},
-		{items = {"mypacman:apple"},rarity = 4,},
-		{items = {"mypacman:peach"},rarity = 4,},
-		{items = {"mypacman:strawberry"},rarity = 4,},},
+		{items = {"pacmine:cherrys"},rarity = 4,},
+		{items = {"pacmine:apple"},rarity = 4,},
+		{items = {"pacmine:peach"},rarity = 4,},
+		{items = {"pacmine:strawberry"},rarity = 4,},},
 		},
 	groups = {dig_immediate = 3, not_in_creative_inventory = 0},
 	node_box = {
@@ -66,9 +69,9 @@ minetest.register_node("mypacman:pellet_2", {
 			}
 		},
 	after_dig_node = function(pos, oldnode, oldmetadata, digger)
-		mypacman.on_player_got_power_pellet(digger)
+		pacmine.on_player_got_power_pellet(digger)
 
-		minetest.sound_play("mypacman_eatfruit", {
+		minetest.sound_play("pacmine_eatfruit", {
 			pos = pos,
 			max_hear_distance = 100,
 			gain = 10.0,
@@ -77,16 +80,16 @@ minetest.register_node("mypacman:pellet_2", {
 })
 
 --The placer block
-minetest.register_node("mypacman:block2",{
+minetest.register_node("pacmine:block2",{
 	description = "Pacman",
-	inventory_image = "mypacman_1.png",
+	inventory_image = "pacmine_1.png",
 	tiles = {
-		"mypacman_wallc.png",
-		"mypacman_1.png",
-		"mypacman_1.png",
-		"mypacman_1.png",
-		"mypacman_1.png",
-		"mypacman_1.png",
+		"pacmine_wallc.png",
+		"pacmine_1.png",
+		"pacmine_1.png",
+		"pacmine_1.png",
+		"pacmine_1.png",
+		"pacmine_1.png",
 		},
 	drawtype = "normal",
 	paramtype = "light",
@@ -94,6 +97,6 @@ minetest.register_node("mypacman:block2",{
 	light_source = 8,
 	groups = {cracky = 1},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
-		mypacman.game_start(pos, player)
+		pacmine.game_start(pos, player)
 	end,
 })

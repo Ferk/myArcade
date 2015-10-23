@@ -12,19 +12,19 @@ for i in ipairs(ghosts) do
 	local itm = ghosts[i][1]
 	local desc = ghosts[i][2]
 
-	minetest.register_entity("mypacman:"..itm, {
+	minetest.register_entity("pacmine:"..itm, {
 		hp_max = 1,
 		physical = true,
 		collide_with_objects = true,
 		visual = "cube",
 		visual_size = {x = 0.6, y = 1},
 		textures = {
-			"mypacman_"..itm.."s.png",
-			"mypacman_"..itm.."s.png",
-			"mypacman_"..itm.."s.png",
-			"mypacman_"..itm.."s.png",
-			"mypacman_"..itm.."f.png",
-			"mypacman_"..itm.."s.png",
+			"pacmine_"..itm.."s.png",
+			"pacmine_"..itm.."s.png",
+			"pacmine_"..itm.."s.png",
+			"pacmine_"..itm.."s.png",
+			"pacmine_"..itm.."f.png",
+			"pacmine_"..itm.."s.png",
 		},
 		velocity = {x=math.random(-1,1), y=0, z=math.random(-1,1)},
 		collisionbox = {-0.25, -1.0, -0.25, 0.25, 0.48, 0.25},
@@ -46,7 +46,7 @@ for i in ipairs(ghosts) do
 			self.timer = 0
 
 			-- Do we have game state? if not just die
-			local gamestate = mypacman.games[self.gameid]
+			local gamestate = pacmine.games[self.gameid]
 			if not gamestate then
 				minetest.log("action", "Removing pacman ghost without game assigned")
 				self.object:remove()
@@ -90,26 +90,26 @@ for i in ipairs(ghosts) do
 					-- set the timer negative so it'll have to wait extra time
 					self.timer = -ghosts_death_delay
 					-- play sound and reward player
-					minetest.sound_play("mypacman_eatghost", {pos = boardcenter,max_hear_distance = 6, object=player, loop=false})
-					player:get_inventory():add_item('main', 'mypacman:cherrys')
+					minetest.sound_play("pacmine_eatghost", {pos = boardcenter,max_hear_distance = 6, object=player, loop=false})
+					player:get_inventory():add_item('main', 'pacmine:cherrys')
 				else
 					-- Ghost catches the player!
 					gamestate.lives = gamestate.lives - 1
 					if gamestate.lives < 1 then
 						minetest.chat_send_player(gamestate.player_name,"Game Over")
 						player:moveto(vector.add(gamestate.pos,{x=0.5,y=0.5,z=-1.5}))
-						mypacman.game_end(self.gameid)
-						minetest.sound_play("mypacman_death", {pos = boardcenter,max_hear_distance = 20, object=player, loop=false})
+						pacmine.game_end(self.gameid)
+						minetest.sound_play("pacmine_death", {pos = boardcenter,max_hear_distance = 20, object=player, loop=false})
 
 					elseif gamestate.lives == 1 then
 						minetest.chat_send_player(gamestate.player_name,"This is your last life")
-						mypacman.game_reset(self.gameid, player)
+						pacmine.game_reset(self.gameid, player)
 					else
 						minetest.chat_send_player(gamestate.player_name,"You have ".. gamestate.lives .." lives left")
-						mypacman.game_reset(self.gameid, player)
+						pacmine.game_reset(self.gameid, player)
 					end
 				end
-				mypacman.update_hud(self.gameid, player)
+				pacmine.update_hud(self.gameid, player)
 
 			else
 				local vec = {x=p.x-s.x, y=p.y-s.y, z=p.z-s.z}

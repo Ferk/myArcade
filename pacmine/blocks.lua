@@ -25,15 +25,17 @@ local i2 = blocks[i][4]
 local lit = blocks[i][5]
 local tf = blocks[i][6]
 
-minetest.register_node("mypacman:"..itm, {
+minetest.register_alias("mypacman:"..itm, "pacmine:"..itm)
+
+minetest.register_node("pacmine:"..itm, {
 	description = des,
 	tiles = {
-		"mypacman_"..i1..".png",
-		"mypacman_"..i2..".png",
-		"mypacman_walls.png",
-		"mypacman_walls.png",
-		"mypacman_walls.png",
-		"mypacman_walls.png",
+		"pacmine_"..i1..".png",
+		"pacmine_"..i2..".png",
+		"pacmine_walls.png",
+		"pacmine_walls.png",
+		"pacmine_walls.png",
+		"pacmine_walls.png",
 		},
 	drawtype = "normal",
 	paramtype = "light",
@@ -47,9 +49,10 @@ minetest.register_node("mypacman:"..itm, {
 })
 end
 --Glass
-minetest.register_node("mypacman:glass", {
+minetest.register_alias("mypacman:glass", "pacmine:glass")
+minetest.register_node("pacmine:glass", {
 	description = "glass",
-	tiles = {"mypacman_glass.png"},
+	tiles = {"pacmine_glass.png"},
 	drawtype = "glasslike",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -58,9 +61,10 @@ minetest.register_node("mypacman:glass", {
 	collision_box = cbox,
 
 })
-minetest.register_node("mypacman:glassw", {
+minetest.register_alias("mypacman:glassw", "pacmine:glassw")
+minetest.register_node("pacmine:glassw", {
 	description = "glassw",
-	tiles = {"mypacman_glass.png"},
+	tiles = {"pacmine_glass.png"},
 	drawtype = "glasslike",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -70,6 +74,3 @@ minetest.register_node("mypacman:glassw", {
 	colision_box = cbox,
 
 })
-
-
-

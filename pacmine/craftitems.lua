@@ -71,16 +71,16 @@ for i in ipairs (pelletitems) do
 	local hlth = pelletitems[i][3]
 	local cbox = pelletitems[i][4]
 
-minetest.register_node("mypacman:"..itm,{
+minetest.register_node("pacmine:"..itm,{
 	description = desc,
-	inventory_image = "mypacman_"..itm..".png",
+	inventory_image = "pacmine_"..itm..".png",
 	tiles = {
-			"mypacman_"..itm..".png",
-			"mypacman_"..itm..".png",
-			"mypacman_"..itm..".png",
-			"mypacman_"..itm..".png",
-			"mypacman_"..itm..".png",
-			"mypacman_"..itm..".png^[transformFX",
+			"pacmine_"..itm..".png",
+			"pacmine_"..itm..".png",
+			"pacmine_"..itm..".png",
+			"pacmine_"..itm..".png",
+			"pacmine_"..itm..".png",
+			"pacmine_"..itm..".png^[transformFX",
 			},
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -91,7 +91,7 @@ minetest.register_node("mypacman:"..itm,{
 	node_box = cbox,
 	collision_box = cbox,
 	after_destruct = function(pos, oldnode)
-		mypacman.on_player_got_fruit()
+		pacmine.on_player_got_fruit()
 	end,
 })
 end
