@@ -163,10 +163,10 @@ function mypacman.on_player_got_power_pellet(player)
 	local powersound = minetest.sound_play("mypacman_powerup", {pos = boardcenter,max_hear_distance = 20, object=player, loop=true})
 
 	minetest.after(power_pellet_duration, function()
+		minetest.sound_stop(powersound)
 		if os.time() >= (gamestate.power_pellet or 0) then
 			gamestate.power_pellet = false
 			minetest.chat_send_player(name, "POWER PELLET wore off")
-			minetest.sound_stop(powersound)
 		end
 	end)
 end
