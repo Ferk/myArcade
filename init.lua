@@ -3,7 +3,7 @@
 mypacman = {}
 
 
-dofile(minetest.get_modpath("mypacman").."/craftitems.lua")
+dofile(minetest.get_modpath("mypacman").."/fruit.lua")
 dofile(minetest.get_modpath("mypacman").."/ghost.lua")
 dofile(minetest.get_modpath("mypacman").."/blocks.lua")
 dofile(minetest.get_modpath("mypacman").."/portals.lua")
@@ -43,7 +43,7 @@ minetest.register_node("mypacman:pellet_1", {
 --Power Pellets. Need to make these do something
 minetest.register_node("mypacman:pellet_2", {
 	description = "Pellet 2",
-	tiles = {"wool_yellow.png^[colorize:white:140"},
+	tiles = {{name="mypacman_powerpellet.png", animation={type="vertical_frames",aspect_w=16, aspect_h=16, length=0.8}},},
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",

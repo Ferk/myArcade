@@ -14,11 +14,12 @@ local cbox =  {
 --Portals
 minetest.register_node("mypacman:portalr", {
 	description = "Portalr ",
-	drawtype = "allfaces",
+	drawtype = "glasslike",
 	tiles = {"mypacman_portal.png"},
 	paramtype = "light",
 	sunlight_propagates = true,
 	light_source = 14,
+	alpha = 150,
 	paramtype2 = "facedir",
 	walkable = false,
 	is_ground_content = false,
@@ -28,11 +29,12 @@ minetest.register_node("mypacman:portalr", {
 })
 minetest.register_node("mypacman:portall", {
 	description = "Portall ",
-	drawtype = "allfaces",
+	drawtype = "glasslike",
 	tiles = {"mypacman_portal.png"},
 	paramtype = "light",
 	sunlight_propagates = true,
 	light_source = 14,
+	alpha = 150,
 	paramtype2 = "facedir",
 	walkable = false,
 	is_ground_content = false,

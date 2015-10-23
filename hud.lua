@@ -23,7 +23,7 @@ function mypacman.update_hud(id, player)
 			position = {x = 0, y = 1},
 			offset = {x=100, y = -100},
 			scale = {x = 100, y = 100},
-			number = 0x8888FF, --color
+			number = 0xfff227, --color
 			text = hudtext
 		})
 		hud_table[game.player_name] = hud
