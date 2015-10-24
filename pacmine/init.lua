@@ -9,12 +9,9 @@ dofile(minetest.get_modpath("pacmine").."/blocks.lua")
 dofile(minetest.get_modpath("pacmine").."/portals.lua")
 dofile(minetest.get_modpath("pacmine").."/gamestate.lua")
 dofile(minetest.get_modpath("pacmine").."/hud.lua")
-
+dofile(minetest.get_modpath("pacmine").."/aliases.lua")
 
 --Yellow Pellets
-minetest.register_alias("mypacman:pellet_1", "pacmine:pellet_1")
-minetest.register_alias("mypacman:pellet_2", "pacmine:pellet_2")
-minetest.register_alias("mypacman:block2", "pacmine:block2")
 minetest.register_node("pacmine:pellet_1", {
 	description = "Pellet 1",
 	tiles = {"wool_yellow.png"},

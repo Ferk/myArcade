@@ -25,8 +25,6 @@ local i2 = blocks[i][4]
 local lit = blocks[i][5]
 local tf = blocks[i][6]
 
-minetest.register_alias("mypacman:"..itm, "pacmine:"..itm)
-
 minetest.register_node("pacmine:"..itm, {
 	description = des,
 	tiles = {
@@ -49,7 +47,6 @@ minetest.register_node("pacmine:"..itm, {
 })
 end
 --Glass
-minetest.register_alias("mypacman:glass", "pacmine:glass")
 minetest.register_node("pacmine:glass", {
 	description = "glass",
 	tiles = {"pacmine_glass.png"},
@@ -61,7 +58,6 @@ minetest.register_node("pacmine:glass", {
 	collision_box = cbox,
 
 })
-minetest.register_alias("mypacman:glassw", "pacmine:glassw")
 minetest.register_node("pacmine:glassw", {
 	description = "glassw",
 	tiles = {"pacmine_glass.png"},
