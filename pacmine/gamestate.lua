@@ -8,6 +8,9 @@ pacmine.players = {}
 -- Duration of the power pellet effect (in seconds)
 local power_pellet_duration = 10
 
+-- Amount of points that will award a life
+local score_for_life_award = 5000
+
 ---------------------------------------------------------
 -- Public functions (these can be called from any other place)
 
@@ -17,12 +20,13 @@ function pacmine.game_start(pos, player)
 	local id = minetest.pos_to_string(pos)
 
 	-- make sure any previous game with the same id has ended
-	if pacmine.games[id] then
+	local gamestate = pacmine.games[id]
+	if gamestate then
 		pacmine.game_end(id)
 	end
 
 	-- Create a new game state with that id and add it to the game list
-	local gamestate = {
+	gamestate = {
 		id = id,
 		player_name = player:get_player_name(),
 		pos = pos,
@@ -32,6 +36,7 @@ function pacmine.game_start(pos, player)
 		speed = 2,
 		lives = 3,
 		score = 0,
+		awarded_lives = 0,
 	}
  	pacmine.games[id] = gamestate
 	pacmine.players[id] = player
@@ -117,6 +122,24 @@ function pacmine.remove_ghosts(id)
 	end
 end
 
+function pacmine.add_fruit(id)
+	local gamestate = pacmine.games[id]
+	if not gamestate then return end
+	local node = {}
+	if gamestate.level == 1 then
+		node.name = "pacmine:cherrys"
+	elseif gamestate.level == 2 then
+		node.name = "pacmine:strawberry"
+	elseif gamestate.level < 5 then
+		node.name = "pacmine:orange"
+	else
+		node.name = "pacmine:apple"
+	end
+	local pos = vector.add(gamestate.start,{x=0,y=-1,z=0})
+	minetest.set_node(pos, node)
+	minetest.get_node_timer(pos):start(math.random(20, 30))
+end
+
 -- A player got a pellet, update the state
 function pacmine.on_player_got_pellet(player)
 	local name = player:get_player_name()
@@ -127,7 +150,9 @@ function pacmine.on_player_got_pellet(player)
 	gamestate.score = gamestate.score + 10
 	pacmine.update_hud(gamestate.id, player)
 
-	if gamestate.pellet_count >= 252 then -- 252
+	if gamestate.pellet_count == 70 or gamestate.pellet_count == 180 then
+		pacmine.add_fruit(gamestate.id)
+	elseif gamestate.pellet_count >= 252 then -- 252
 		minetest.chat_send_player(name, "You cleared the board!")
 
 		pacmine.remove_ghosts(gamestate.id)
@@ -145,6 +170,12 @@ function pacmine.on_player_got_pellet(player)
 			pacmine.game_reset(gamestate.id, player)
 			minetest.sound_play("pacmine_beginning", {pos = pos,max_hear_distance = 40,gain = 10.0,})
 		end)
+	end
+
+	if gamestate.score / score_for_life_award >= 1 + gamestate.awarded_lives then
+		minetest.chat_send_player(name, "You reached " .. gamestate.score .. " points and earned an extra life!")
+		gamestate.lives = gamestate.lives + 1
+		gamestate.awarded_lives = gamestate.awarded_lives + 1
 	end
 end
 
@@ -169,6 +200,17 @@ function pacmine.on_player_got_power_pellet(player)
 			minetest.chat_send_player(name, "POWER PELLET wore off")
 		end
 	end)
+	minetest.sound_play("pacmine_eatfruit", {pos = pos, max_hear_distance = 6})
+end
+
+-- A player got a fruit, update the state
+function pacmine.on_player_got_fruit(player, points)
+	local name = player:get_player_name()
+	local gamestate = pacmine.get_game_by_player(name)
+	if not gamestate then return end
+	gamestate.score = gamestate.score + points
+	minetest.chat_send_player(name, points .. " bonus points!")
+	minetest.sound_play("pacmine_eatfruit", {pos = pos, max_hear_distance = 6})
 end
 
 -- Get the game that the given player is playing
@@ -220,12 +262,18 @@ local function on_player_gamestep(player, gameid)
 		elseif node.name == "pacmine:pellet_2" then
 			minetest.remove_node(pos)
 			pacmine.on_player_got_power_pellet(player)
-
-			minetest.sound_play("pacmine_eatfruit", {
-				pos = pos,
-				max_hear_distance = 100,
-				gain = 10.0,
-			})
+		elseif node.name == "pacmine:cherrys" then
+			minetest.remove_node(pos)
+			pacmine.on_player_got_fruit(player, 100)
+		elseif node.name == "pacmine:strawberry" then
+			minetest.remove_node(pos)
+			pacmine.on_player_got_fruit(player, 300)
+		elseif node.name == "pacmine:orange" then
+			minetest.remove_node(pos)
+			pacmine.on_player_got_fruit(player, 500)
+		elseif node.name == "pacmine:apple" then
+			minetest.remove_node(pos)
+			pacmine.on_player_got_fruit(player, 700)
 		end
 	end
 end

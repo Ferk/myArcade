@@ -24,12 +24,13 @@ minetest.register_node("pacmine:"..itm,{
 	paramtype2 = "facedir",
 	walkable = false,
 	light_source = 14,
-	groups = {cracky=3,not_in_creative_inventory = 0},
+	groups = {immortal=1,not_in_creative_inventory = 0},
 	--node_box = cbox,
 	selection_box = cbox,
 	collision_box = cbox,
-	after_destruct = function(pos, oldnode)
-		pacmine.on_player_got_fruit()
-	end,
+	on_timer = function(pos, dtime)
+		print("DELETEEE??")
+		minetest.remove_node(pos)
+	end
 })
 end
