@@ -12,14 +12,15 @@ local cbox =  {
 	}
 
 --Portals
-minetest.register_alias("mypacman:portalr", "pacmine:portalr")
+minetest.register_alias("pacmine:portalr", "pacmine:portalr")
 minetest.register_node("pacmine:portalr", {
 	description = "Portalr ",
-	drawtype = "allfaces",
+	drawtype = "glasslike",
 	tiles = {"pacmine_portal.png"},
 	paramtype = "light",
 	sunlight_propagates = true,
 	light_source = 14,
+	alpha = 150,
 	paramtype2 = "facedir",
 	walkable = false,
 	is_ground_content = false,
@@ -27,14 +28,15 @@ minetest.register_node("pacmine:portalr", {
 	selection_box = sbox,
 
 })
-minetest.register_alias("mypacman:portall", "pacmine:portall")
+minetest.register_alias("pacmine:portall", "pacmine:portall")
 minetest.register_node("pacmine:portall", {
 	description = "Portall ",
-	drawtype = "allfaces",
+	drawtype = "glasslike",
 	tiles = {"pacmine_portal.png"},
 	paramtype = "light",
 	sunlight_propagates = true,
 	light_source = 14,
+	alpha = 150,
 	paramtype2 = "facedir",
 	walkable = false,
 	is_ground_content = false,

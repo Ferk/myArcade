@@ -6,6 +6,6 @@ local nodes = {
 	"pellet_1","pellet_2","block2",
 }
 
-for _,i in pairs(nodes) do
+for _,itm in pairs(nodes) do
 	minetest.register_alias("mypacman:"..itm, "pacmine:"..itm)
 end

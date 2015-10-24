@@ -2,14 +2,15 @@
 -- This variable will be exported to other mods when they "depend" on this mod
 pacmine = {}
 
-
-dofile(minetest.get_modpath("pacmine").."/craftitems.lua")
+dofile(minetest.get_modpath("pacmine").."/fruit.lua")
 dofile(minetest.get_modpath("pacmine").."/ghost.lua")
 dofile(minetest.get_modpath("pacmine").."/blocks.lua")
 dofile(minetest.get_modpath("pacmine").."/portals.lua")
 dofile(minetest.get_modpath("pacmine").."/gamestate.lua")
 dofile(minetest.get_modpath("pacmine").."/hud.lua")
 dofile(minetest.get_modpath("pacmine").."/aliases.lua")
+
+
 
 --Yellow Pellets
 minetest.register_node("pacmine:pellet_1", {
@@ -43,7 +44,7 @@ minetest.register_node("pacmine:pellet_1", {
 --Power Pellets. Need to make these do something
 minetest.register_node("pacmine:pellet_2", {
 	description = "Pellet 2",
-	tiles = {"wool_yellow.png^[colorize:white:140"},
+	tiles = {{name="pacmine_powerpellet.png", animation={type="vertical_frames",aspect_w=16, aspect_h=16, length=0.8}},},
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",

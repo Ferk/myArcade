@@ -11,10 +11,11 @@ function pacmine.update_hud(id, player)
 		pacmine.remove_hud(player)
 		return
 	end
-
-	local hudtext = "Score: " .. game.score
-		.. "\nLevel: " .. game.level
-		.. "\nLives: " .. game.lives
+	local pellets_left = 252 - game.pellet_count
+	local hudtext = "Score      " .. game.score
+		.. "\nLevel       " .. game.level
+		.. "\nLives       " .. game.lives
+		.. "\nPellets    " .. pellets_left
 
 	local hud = hud_table[game.player_name]
 	if not hud then
@@ -23,7 +24,7 @@ function pacmine.update_hud(id, player)
 			position = {x = 0, y = 1},
 			offset = {x=100, y = -100},
 			scale = {x = 100, y = 100},
-			number = 0x8888FF, --color
+			number = 0xfff227, --color
 			text = hudtext
 		})
 		hud_table[game.player_name] = hud

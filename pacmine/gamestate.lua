@@ -36,7 +36,7 @@ function pacmine.game_start(pos, player)
  	pacmine.games[id] = gamestate
 	pacmine.players[id] = player
 
-	minetest.log("action","New pacman game started at " .. id .. " by " .. gamestate.player_name)
+	minetest.log("action","New pacmine game started at " .. id .. " by " .. gamestate.player_name)
 
 	-- place schematic
 	local schem = minetest.get_modpath("pacmine").."/schems/pacmine_3.mts"
@@ -204,7 +204,7 @@ local function gamestate_load()
 	end
 end
 
--- Called every 0.5 seconds for each player that is currently playing pacman
+-- Called every 0.5 seconds for each player that is currently playing
 local function on_player_gamestep(player, gameid)
 	local player_pos = player:getpos()
 	local positions = {
@@ -283,14 +283,14 @@ minetest.register_chatcommand("pacmine_exit", {
 		if gamestate then
 			pacmine.game_end(gamestate.id)
 			minetest.get_player_by_name(name):moveto(vector.add(gamestate.pos,{x=0.5,y=0.5,z=-1.5}))
-			minetest.chat_send_player(name, "You are no longer playing pacman")
+			minetest.chat_send_player(name, "You are no longer playing pacmine")
 		else
-			minetest.chat_send_player(name, "You are not currently in a pacman game")
+			minetest.chat_send_player(name, "You are not currently in a pacmine game")
 		end
 	end
 })
 
 minetest.register_on_shutdown(function()
-	minetest.log("action", "Server shuts down. Saving pacman data")
+	minetest.log("action", "Server shuts down. Saving pacmine data")
 	gamestate_save()
 end)
