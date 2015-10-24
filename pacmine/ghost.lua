@@ -97,7 +97,6 @@ for i in ipairs(ghosts) do
 					gamestate.lives = gamestate.lives - 1
 					if gamestate.lives < 1 then
 						minetest.chat_send_player(gamestate.player_name,"Game Over")
-						player:moveto(vector.add(gamestate.pos,{x=0.5,y=0.5,z=-1.5}))
 						pacmine.game_end(self.gameid)
 						minetest.sound_play("pacmine_death", {pos = boardcenter,max_hear_distance = 20, object=player, loop=false})
 
