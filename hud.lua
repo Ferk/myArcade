@@ -11,10 +11,11 @@ function mypacman.update_hud(id, player)
 		mypacman.remove_hud(player)
 		return
 	end
-
-	local hudtext = "Score: " .. game.score
-		.. "\nLevel: " .. game.level
-		.. "\nLives: " .. game.lives
+	local pellets_left = 252 - game.pellet_count
+	local hudtext = "Score      " .. game.score
+		.. "\nLevel       " .. game.level
+		.. "\nLives       " .. game.lives
+		.. "\nPellets    " .. pellets_left
 
 	local hud = hud_table[game.player_name]
 	if not hud then
