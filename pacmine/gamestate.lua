@@ -39,7 +39,7 @@ function pacmine.game_start(pos, player)
 	minetest.log("action","New pacmine game started at " .. id .. " by " .. gamestate.player_name)
 
 	-- place schematic
-	local schem = minetest.get_modpath("pacmine").."/schems/pacmine_3.mts"
+	local schem = minetest.get_modpath("pacmine").."/schems/pacmine.mts"
 	minetest.place_schematic({x=pos.x,y=pos.y-1,z=pos.z-2},schem,0, "air", true)
 
 	-- Set start positions
@@ -138,7 +138,7 @@ function pacmine.on_player_got_pellet(player)
 		minetest.after(3.0, function()
 			minetest.chat_send_player(name, "Starting Level "..gamestate.level)
 			-- place schematic
-			local schem = minetest.get_modpath("pacmine").."/schems/pacmine_3.mts"
+			local schem = minetest.get_modpath("pacmine").."/schems/pacmine.mts"
 			minetest.place_schematic(vector.add(gamestate.pos, {x=0,y=-1,z=-2}),schem,0, "air", true)
 
 			-- Set start positions

@@ -8,7 +8,7 @@ dofile(minetest.get_modpath("pacmine").."/blocks.lua")
 dofile(minetest.get_modpath("pacmine").."/portals.lua")
 dofile(minetest.get_modpath("pacmine").."/gamestate.lua")
 dofile(minetest.get_modpath("pacmine").."/hud.lua")
-dofile(minetest.get_modpath("pacmine").."/aliases.lua")
+--dofile(minetest.get_modpath("pacmine").."/aliases.lua")
 
 
 
