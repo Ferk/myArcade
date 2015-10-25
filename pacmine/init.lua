@@ -22,23 +22,13 @@ minetest.register_node("pacmine:pellet_1", {
 	walkable = false,
 	light_source = 11,
 	drop = "",
-	groups = {dig_immediate = 3, not_in_creative_inventory = 0},
+	groups = {immortal = 1, not_in_creative_inventory = 1},
 	node_box = {
 		type = "fixed",
 		fixed = {
 			{-0.625, 0.25, -0.125, -0.375, 0.5, 0.125},
 		}
 	},
-	on_destruct = function(pos)
-		minetest.sound_play("pacmine_chomp", {
-			pos = pos,
-			max_hear_distance = 100,
-			gain = 10.0,
-		})
-	end,
-	after_dig_node = function(pos, oldnode, oldmetadata, digger)
-		pacmine.on_player_got_pellet(digger)
-	end,
 })
 
 --Power Pellets. Need to make these do something
@@ -56,7 +46,7 @@ minetest.register_node("pacmine:pellet_2", {
 		{items = {"pacmine:peach"},rarity = 4,},
 		{items = {"pacmine:strawberry"},rarity = 4,},},
 		},
-	groups = {dig_immediate = 3, not_in_creative_inventory = 0},
+	groups = {immortal = 1, not_in_creative_inventory = 1},
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -66,15 +56,6 @@ minetest.register_node("pacmine:pellet_2", {
 			{-0.6875, -0.1875, -0.1875, -0.3125, 0.1875, 0.1875},
 			}
 		},
-	after_dig_node = function(pos, oldnode, oldmetadata, digger)
-		pacmine.on_player_got_power_pellet(digger)
-
-		minetest.sound_play("pacmine_eatfruit", {
-			pos = pos,
-			max_hear_distance = 100,
-			gain = 10.0,
-		})
-	end,
 })
 
 --The placer block

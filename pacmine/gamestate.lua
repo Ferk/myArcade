@@ -18,17 +18,19 @@ local score_for_life_award = 5000
 function pacmine.game_start(pos, player)
 	-- create an id unique for the given position
 	local id = minetest.pos_to_string(pos)
+	local player_name = player:get_player_name()
 
 	-- make sure any previous game with the same id has ended
 	local gamestate = pacmine.games[id]
 	if gamestate then
-		pacmine.game_end(id)
+		minetest.chat_send_player(name, "A game is already in progress for player " .. gamestate.player_name)
+		return
 	end
 
 	-- Create a new game state with that id and add it to the game list
 	gamestate = {
 		id = id,
-		player_name = player:get_player_name(),
+		player_name = player_name,
 		pos = pos,
 		start = {x=pos.x+14,y=pos.y+0.5,z=pos.z+16},
 		pellet_count = 0,
@@ -56,7 +58,20 @@ end
 -- Finish the game with the given id
 function pacmine.game_end(id)
 	pacmine.remove_ghosts(id)
-	pacmine.remove_hud(pacmine.players[id], pacmine.games[id].player_name)
+	local gamestate = pacmine.games[id]
+	local player = pacmine.players[id] or minetest.get_player_by_name(gamestate.player_name)
+	if player then
+		pacmine.remove_hud(player, gamestate.player_name)
+		player:moveto(vector.add(gamestate.pos,{x=0.5,y=0.5,z=-1.5}))
+	end
+	-- Save score
+	local ranking = myhighscore.save_score("pacmine", {
+		player = gamestate.player_name,
+		score = gamestate.score
+	})
+	if ranking then
+		minetest.chat_send_player(gamestate.player_name, "You made it to the highscores! Your Ranking: " .. ranking)
+	end
 	-- Clear the data
 	pacmine.games[id] = nil
 	pacmine.players[id] = nil
@@ -122,10 +137,12 @@ function pacmine.remove_ghosts(id)
 	end
 end
 
+-- Add a fruit to the game board
 function pacmine.add_fruit(id)
 	local gamestate = pacmine.games[id]
 	if not gamestate then return end
 	local node = {}
+	-- Different fruit will be used depending on the level
 	if gamestate.level == 1 then
 		node.name = "pacmine:cherrys"
 	elseif gamestate.level == 2 then
@@ -137,6 +154,7 @@ function pacmine.add_fruit(id)
 	end
 	local pos = vector.add(gamestate.start,{x=0,y=-1,z=0})
 	minetest.set_node(pos, node)
+	-- Set the timer for the fruit to disappear
 	minetest.get_node_timer(pos):start(math.random(20, 30))
 end
 
@@ -149,6 +167,7 @@ function pacmine.on_player_got_pellet(player)
 	gamestate.pellet_count = gamestate.pellet_count + 1
 	gamestate.score = gamestate.score + 10
 	pacmine.update_hud(gamestate.id, player)
+	minetest.sound_play("pacmine_chomp", {object = player, max_hear_distance = 6})
 
 	if gamestate.pellet_count == 70 or gamestate.pellet_count == 180 then
 		pacmine.add_fruit(gamestate.id)
@@ -200,7 +219,6 @@ function pacmine.on_player_got_power_pellet(player)
 			minetest.chat_send_player(name, "POWER PELLET wore off")
 		end
 	end)
-	minetest.sound_play("pacmine_eatfruit", {pos = pos, max_hear_distance = 6})
 end
 
 -- A player got a fruit, update the state
@@ -225,26 +243,6 @@ end
 ---------------------------------------------------------
 --- Private functions (only can be used inside this file)
 
--- Save Table
-local function gamestate_save()
-	local data = pacmine.games
-	local f, err = io.open(minetest.get_worldpath().."/pacmine_data", "w")
-    if err then return err end
-	f:write(minetest.serialize(data))
-	f:close()
-end
-
---Read Table
-local function gamestate_load()
-	local f, err = io.open(minetest.get_worldpath().."/pacmine_data", "r")
-	if f then
-		local data = minetest.deserialize(f:read("*a"))
-		f:close()
-		return data
-	else
-		return nil
-	end
-end
 
 -- Called every 0.5 seconds for each player that is currently playing
 local function on_player_gamestep(player, gameid)
@@ -281,34 +279,16 @@ end
 -------------------
 --- Execution code
 
--- load the gamestate from disk
-pacmine.games = gamestate_load() or {}
 
 -- Time counters
 local tmr_gamestep = 0
-local tmr_savestep = 0
 minetest.register_globalstep(function(dtime)
 	tmr_gamestep = tmr_gamestep + dtime;
 	if tmr_gamestep > 0.2 then
 		for id,player in pairs(pacmine.players) do
 			on_player_gamestep(player, id)
 		end
-		tmr_savestep = tmr_savestep + tmr_gamestep
-		if tmr_savestep > 10 then
-			gamestate_save()
-			tmr_savestep = 0
-		end
 		tmr_gamestep = 0
-	end
-end)
-
-minetest.register_on_joinplayer(function(player)
-	local name = player:get_player_name()
-	for id,game in pairs(pacmine.games) do
-		if game.player_name == name then
-			pacmine.players[id] = player
-			pacmine.update_hud(id, player)
-		end
 	end
 end)
 
@@ -316,9 +296,15 @@ minetest.register_on_leaveplayer(function(player)
 	local name = player:get_player_name()
 	for id,game in pairs(pacmine.games) do
 		if game.player_name == name then
-			pacmine.players[id] = nil
-			pacmine.remove_hud(player, name)
+			pacmine.game_end(id)
 		end
+	end
+end)
+
+minetest.register_on_shutdown(function()
+	minetest.log("action", "Server shuts down. Ending all pacmine games")
+	for id,game in pairs(pacmine.games) do
+		pacmine.game_end(id)
 	end
 end)
 
@@ -330,7 +316,6 @@ minetest.register_chatcommand("pacmine_exit", {
 		local gamestate = pacmine.get_game_by_player(name)
 		if gamestate then
 			pacmine.game_end(gamestate.id)
-			minetest.get_player_by_name(name):moveto(vector.add(gamestate.pos,{x=0.5,y=0.5,z=-1.5}))
 			minetest.chat_send_player(name, "You are no longer playing pacmine")
 		else
 			minetest.chat_send_player(name, "You are not currently in a pacmine game")
@@ -338,7 +323,8 @@ minetest.register_chatcommand("pacmine_exit", {
 	end
 })
 
-minetest.register_on_shutdown(function()
-	minetest.log("action", "Server shuts down. Saving pacmine data")
-	gamestate_save()
-end)
+-- Register with the myhighscore mod
+myhighscore.register_game("pacmine", {
+	description = "Pacmine",
+	icon = "pacmine_1.png",
+})
