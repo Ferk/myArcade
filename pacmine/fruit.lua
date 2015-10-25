@@ -29,7 +29,6 @@ minetest.register_node("pacmine:"..itm,{
 	selection_box = cbox,
 	collision_box = cbox,
 	on_timer = function(pos, dtime)
-		print("DELETEEE??")
 		minetest.remove_node(pos)
 	end
 })
