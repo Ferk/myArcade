@@ -64,6 +64,14 @@ function pacmine.game_end(id)
 		pacmine.remove_hud(player, gamestate.player_name)
 		player:moveto(vector.add(gamestate.pos,{x=0.5,y=0.5,z=-1.5}))
 	end
+	-- Save score
+	local ranking = myhighscore.save_score("pacmine", {
+		player = gamestate.player_name,
+		score = gamestate.score
+	})
+	if ranking then
+		minetest.chat_send_player(gamestate.player_name, "You made it to the highscores! Your Ranking: " .. ranking)
+	end
 	-- Clear the data
 	pacmine.games[id] = nil
 	pacmine.players[id] = nil
@@ -313,4 +321,10 @@ minetest.register_chatcommand("pacmine_exit", {
 			minetest.chat_send_player(name, "You are not currently in a pacmine game")
 		end
 	end
+})
+
+-- Register with the myhighscore mod
+myhighscore.register_game("pacmine", {
+	description = "Pacmine",
+	icon = "pacmine_1.png",
 })
