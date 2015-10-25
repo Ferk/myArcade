@@ -2,7 +2,11 @@ local cbox = {
 		type = "fixed",
 		fixed = {{-0.875,  0.125,  -0.0625,  -0.125,  0.875,  0.0625}}
 	}
-
+local sbox = {
+		type = "fixed",
+		fixed = {{0, 0, 0, 0, 0, 0}}
+	}
+	
 local pelletitems = {
 	{"cherrys", "Cherrys","2"},
 	{"apple", "Apple","3"},
@@ -26,10 +30,9 @@ minetest.register_node("pacmine:"..itm,{
 	light_source = 14,
 	groups = {immortal=1,not_in_creative_inventory = 0},
 	--node_box = cbox,
-	selection_box = cbox,
+	selection_box = sbox,
 	collision_box = cbox,
 	on_timer = function(pos, dtime)
-		print("DELETEEE??")
 		minetest.remove_node(pos)
 	end
 })

@@ -145,15 +145,20 @@ function pacmine.add_fruit(id)
 	-- Different fruit will be used depending on the level
 	if gamestate.level == 1 then
 		node.name = "pacmine:cherrys"
+		node.param2 = 3
 	elseif gamestate.level == 2 then
 		node.name = "pacmine:strawberry"
+		node.param2 = 3
 	elseif gamestate.level < 5 then
 		node.name = "pacmine:orange"
+		node.param2 = 3
 	else
 		node.name = "pacmine:apple"
+		node.param2 = 3
 	end
 	local pos = vector.add(gamestate.start,{x=0,y=-1,z=0})
 	minetest.set_node(pos, node)
+	print(node.param2)
 	-- Set the timer for the fruit to disappear
 	minetest.get_node_timer(pos):start(math.random(20, 30))
 end

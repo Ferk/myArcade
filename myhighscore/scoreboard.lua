@@ -4,9 +4,9 @@
 
 local button_form = "size[6,8;]"..
 				"background[0,0;6,8;myhighscore_form_bg.png]"..
-				"label[1,0.5;HIGH SCORES]"..
+				"label[2,0.5;HIGH SCORES]"..
 				"button[1,1;4,1;game;label]"..
-				"button_exit[4,7;1,2;exit;Exit]"
+				"button_exit[2,7;2,1;exit;Exit]"
 
 --place holders
 local game_name = "the game"
@@ -19,18 +19,18 @@ local function get_formspec_for_game(name)
 	-- Obtain a comma separated list of scores to display
 	local scorelist = ""
 	for _,score in pairs(scores) do
-		scorelist = scorelist .. minetest.formspec_escape(score.player) ..
-			"\t\t\t\t " .. score.score ..","
+		scorelist = scorelist .."       ".. minetest.formspec_escape(score.player) ..
+			"\t\t\t\t " .."           ".. score.score ..","
 	end
 
 	return "size[6,8;]"..
 		"background[0,0;6,8;myhighscore_form_bg.png]"..
 		"label[1,0.5;HIGH SCORES FOR "..def.description.."]"..
-		"label[1,1.5;PLAYER]"..
+		"label[1.25,1.5;PLAYER]"..
 		"label[3.5,1.5;SCORE]"..
 		"textlist[0.5,2;5,5;;"..scorelist.."]"..
-		"button[2,7;1,2;back;Back]"..
-		"button_exit[4,7;1,2;exit;Exit]"
+		"button[1,7;2,1;back;Back]"..
+		"button_exit[3,7;2,1;exit;Exit]"
 end
 
 

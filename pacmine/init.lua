@@ -29,6 +29,12 @@ minetest.register_node("pacmine:pellet_1", {
 			{-0.625, 0.25, -0.125, -0.375, 0.5, 0.125},
 		}
 	},
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{0, 0, 0, 0, 0, 0},
+		}
+	},
 })
 
 --Power Pellets. Need to make these do something
@@ -56,9 +62,15 @@ minetest.register_node("pacmine:pellet_2", {
 			{-0.6875, -0.1875, -0.1875, -0.3125, 0.1875, 0.1875},
 			}
 		},
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{0, 0, 0, 0, 0, 0},
+		}
+	},
 })
 
---The placer block
+--The placer block for pacmine
 minetest.register_node("pacmine:block2",{
 	description = "Pacman",
 	inventory_image = "pacmine_1.png",
@@ -77,5 +89,27 @@ minetest.register_node("pacmine:block2",{
 	groups = {cracky = 1},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		pacmine.game_start(pos, player)
+	end,
+})
+--The placer block for pacmine mini
+minetest.register_node("pacmine:block",{
+	description = "Pacman Mini",
+	inventory_image = "pacmine_1.png^pacmine_mini.png",
+	tiles = {
+		"pacmine_wallc.png",
+		"pacmine_1.png",
+		"pacmine_1.png",
+		"pacmine_1.png",
+		"pacmine_1.png",
+		"pacmine_1.png^pacmine_mini.png",
+		},
+	drawtype = "normal",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	light_source = 8,
+	groups = {cracky = 1},
+	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
+		local schem = minetest.get_modpath("pacmine").."/schems/pacmini.mts"
+		minetest.place_schematic({x=pos.x,y=pos.y-1,z=pos.z-2},schem,0, "air", true)
 	end,
 })

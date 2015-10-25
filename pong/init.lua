@@ -121,6 +121,6 @@ minetest.register_node("pong:block",{
 	groups = {cracky = 1},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local schem = minetest.get_modpath("pong").."/schems/pong.mts"
-		minetest.place_schematic(pos,schem,0, "air", true)
+		minetest.place_schematic({x=pos.x,y=pos.y-1,z=pos.z},schem,0, "air", true)
 	end,
 })
