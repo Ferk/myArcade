@@ -1,3 +1,6 @@
+
+dofile(minetest.get_modpath("pong").."/ball.lua")
+
 local blocks = {
 	{"floor","Floor"},
 	{"dash","Dash"},
@@ -113,7 +116,7 @@ minetest.register_node("pong:block",{
 		"pong_floor.png",
 		"pong_floor.png",
 		"pong_dash.png",
-		},
+	},
 	drawtype = "normal",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -121,6 +124,14 @@ minetest.register_node("pong:block",{
 	groups = {cracky = 1},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local schem = minetest.get_modpath("pong").."/schems/pong.mts"
-		minetest.place_schematic({x=pos.x,y=pos.y-1,z=pos.z},schem,0, "air", true)
+		pos.y = pos.y - 1
+		minetest.place_schematic(pos,schem,0, "air", true)
+
+		local ballpos = vector.add(pos, {x=9,y=1,z=4})
+		local ball = minetest.add_entity(ballpos, "pong:ball"):get_luaentity()
+
+		-- give to the ball the boundaries of the field
+		ball.minp = vector.add(pos, {x=1,y=0,z=1})
+		ball.maxp = vector.add(pos, {x=17,y=2,z=8})
 	end,
 })
