@@ -49,6 +49,9 @@ minetest.register_node("mario:coin", {
 	paramtype = "light",
 	walkable = false,
 	groups = {cracky = 2},
+	on_destruct = function(pos)
+		minetest.sound_play("mario-coin", {pos = pos,max_hear_distance = 40,gain = 10.0,})
+	end,
 })
 
 local nbox = {
@@ -79,6 +82,9 @@ minetest.register_node("mario:mushroom",{
 	paramtype = "light",
 	groups = {cracky = 3},
 	node_box = nbox,
+	on_destruct = function(pos)
+		minetest.sound_play("mario-bonus", {pos = pos,max_hear_distance = 40,gain = 10.0,})
+	end,
 })
 
 minetest.register_node("mario:mushroom_green",{
@@ -95,4 +101,7 @@ minetest.register_node("mario:mushroom_green",{
 	paramtype = "light",
 	groups = {cracky = 3},
 	node_box = nbox,
+	on_destruct = function(pos)
+		minetest.sound_play("mario-1-up", {pos = pos,max_hear_distance = 40,gain = 10.0,})
+	end,
 })

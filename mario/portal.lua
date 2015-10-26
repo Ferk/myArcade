@@ -55,7 +55,7 @@ minetest.register_abm({
 		for k, player in pairs(objs) do
 			if player:get_player_name() then
 
-				player:setpos({x=pos.x+31,y=pos.y+0.1,z=pos.z})
+				player:setpos({x=pos.x+31,y=pos.y+0.5,z=pos.z})
 			end
 		end
 	end
@@ -69,7 +69,7 @@ minetest.register_abm({
 		for k, player in pairs(objs) do
 			if player:get_player_name() then
 
-				player:setpos({x=pos.x-31,y=pos.y+0.1,z=pos.z})
+				player:setpos({x=pos.x-31,y=pos.y+0.5,z=pos.z})
 			end
 		end
 	end

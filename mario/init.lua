@@ -1,8 +1,11 @@
+mario = {}
 
 dofile(minetest.get_modpath("mario").."/pipes.lua")
 dofile(minetest.get_modpath("mario").."/blocks.lua")
 dofile(minetest.get_modpath("mario").."/portal.lua")
 dofile(minetest.get_modpath("mario").."/turtle.lua")
+dofile(minetest.get_modpath("mario").."/gamestate.lua")
+
 
 minetest.register_node("mario:placer",{
 	description = "Reset",
@@ -23,8 +26,9 @@ minetest.register_node("mario:placer",{
 		player:setpos({x=pos.x+16,y=pos.y+0.1,z=pos.z+1})
 		print(name)
 		player:set_physics_override(1,1,0.3,true,false)
-		minetest.add_entity({x=pos.x+3,y=pos.y+12,z=pos.z+1}, "mario:1")
-		minetest.add_entity({x=pos.x+30,y=pos.y+12,z=pos.z+1}, "mario:1")
+		minetest.add_entity({x=pos.x+3,y=pos.y+12,z=pos.z+1}, "mario:turtle1")
+		minetest.add_entity({x=pos.x+30,y=pos.y+12,z=pos.z+1}, "mario:turtle1")
+		minetest.sound_play("mario-game-start", {pos = pos,max_hear_distance = 40,gain = 10.0,})
 	end,
 })
 minetest.register_node("mario:placer2",{

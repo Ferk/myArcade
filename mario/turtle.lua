@@ -3,10 +3,10 @@ local ghosts_death_delay = 5
 
 
 local turtles = {
-	{"1","Ferk"},
-	{"2","Don"},
-	{"3","Max"},
-	{"4","Nathan"},
+	{"turtle1","Ferk"},
+	{"turtle2","Don"},
+	{"turtle3","Max"},
+	{"turtle4","Nathan"},
 	}
 for i in ipairs(turtles) do
 	local itm = turtles[i][1]
@@ -28,7 +28,7 @@ for i in ipairs(turtles) do
 		},
 
 		velocity = {x=math.random(-1,1), y=0, z=math.random(-1,1)},
-		collisionbox = {-0.25, -1.0, -0.25, 0.25, 0.48, 0.25},
+		collisionbox = {-0.25, -0.25, -0.25, 0.25, 0.25, 0.25},
 		is_visible = true,
 		automatic_rotate = true,
 		automatic_face_movement_dir = -90, -- set yaw direction in degrees, false to disable
@@ -44,9 +44,9 @@ for i in ipairs(turtles) do
 			self.timer = (self.timer or 0) + dtime
 			if self.timer < 1 then return end
 			self.timer = 0
---[[
+---[[
 			-- Do we have game state? if not just die
-			local gamestate = pacmine.games[self.gameid]
+			local gamestate = mario.games[self.gameid]
 			if not gamestate then
 				minetest.log("action", "Removing pacman ghost without game assigned")
 				self.object:remove()
@@ -90,25 +90,25 @@ for i in ipairs(turtles) do
 					-- set the timer negative so it'll have to wait extra time
 					self.timer = -ghosts_death_delay
 					-- play sound and reward player
-					minetest.sound_play("pacmine_eatghost", {pos = boardcenter,max_hear_distance = 6, object=player, loop=false})
-					player:get_inventory():add_item('main', 'pacmine:cherrys')
+					minetest.sound_play("mario_eatghost", {pos = boardcenter,max_hear_distance = 6, object=player, loop=false})
+					player:get_inventory():add_item('main', 'mario:cherrys')
 				else
 					-- Ghost catches the player!
 					gamestate.lives = gamestate.lives - 1
 					if gamestate.lives < 1 then
 						minetest.chat_send_player(gamestate.player_name,"Game Over")
-						pacmine.game_end(self.gameid)
-						minetest.sound_play("pacmine_death", {pos = boardcenter,max_hear_distance = 20, object=player, loop=false})
+						mario.game_end(self.gameid)
+						minetest.sound_play("mario_death", {pos = boardcenter,max_hear_distance = 20, object=player, loop=false})
 
 					elseif gamestate.lives == 1 then
 						minetest.chat_send_player(gamestate.player_name,"This is your last life")
-						pacmine.game_reset(self.gameid, player)
+						mario.game_reset(self.gameid, player)
 					else
 						minetest.chat_send_player(gamestate.player_name,"You have ".. gamestate.lives .." lives left")
-						pacmine.game_reset(self.gameid, player)
+						mario.game_reset(self.gameid, player)
 					end
 				end
-				pacmine.update_hud(self.gameid, player)
+				mario.update_hud(self.gameid, player)
 
 			else
 				local vec = {x=p.x-s.x, y=p.y-s.y, z=p.z-s.z}
