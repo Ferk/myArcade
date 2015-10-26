@@ -3,10 +3,10 @@ local ghosts_death_delay = 5
 
 
 local turtles = {
-	{"1","Ferk"},
-	{"2","Don"},
-	{"3","Max"},
-	{"4","Nathan"},
+	{"turtle1","Ferk"},
+	{"turtle2","Don"},
+	{"turtle3","Max"},
+	{"turtle4","Nathan"},
 	}
 for i in ipairs(turtles) do
 	local itm = turtles[i][1]
@@ -27,26 +27,40 @@ for i in ipairs(turtles) do
 			"mario_turtle.png",
 		},
 
-		velocity = {x=math.random(-1,1), y=0, z=math.random(-1,1)},
-		collisionbox = {-0.25, -1.0, -0.25, 0.25, 0.48, 0.25},
+		collisionbox = {-0.25, -0.5, -0.25, 0.25, 0.4, 0.25},
 		is_visible = true,
 		automatic_rotate = true,
 		automatic_face_movement_dir = -90, -- set yaw direction in degrees, false to disable
 		makes_footstep_sound = false,
+		direction = {x=1, y=0, z=0},
+		acceleration = {x=0, y=-10, z=0},
+		speed = 3,
 
-		set_velocity = function(self, v)
-			if not v then v = 0 end
-			local yaw = self.object:getyaw()
-			self.object:setvelocity({x=math.sin(yaw) * -v, y=self.object:getvelocity().y, z=math.cos(yaw) * v})
+		update_velocity = function(self)
+			local velocity = vector.multiply(self.direction, self.speed)
+			self.object:setvelocity(velocity)
 		end,
+
 		on_step = function(self, dtime)
 			-- every 1 second
 			self.timer = (self.timer or 0) + dtime
 			if self.timer < 1 then return end
 			self.timer = 0
+
+			local velocity = self.object:getvelocity()
+
+			-- if our velocity is close to zero, turn around (we are in collision)
+			if math.abs(velocity.x) < 0.25 then
+				self.direction.x = -self.direction.x
+				if(self.direction.x == 0) then
+					self.direction.x = 1
+				end
+			end
+			self:update_velocity()
+		end,
 --[[
 			-- Do we have game state? if not just die
-			local gamestate = pacmine.games[self.gameid]
+			local gamestate = mario.games[self.gameid]
 			if not gamestate then
 				minetest.log("action", "Removing pacman ghost without game assigned")
 				self.object:remove()
@@ -90,25 +104,25 @@ for i in ipairs(turtles) do
 					-- set the timer negative so it'll have to wait extra time
 					self.timer = -ghosts_death_delay
 					-- play sound and reward player
-					minetest.sound_play("pacmine_eatghost", {pos = boardcenter,max_hear_distance = 6, object=player, loop=false})
-					player:get_inventory():add_item('main', 'pacmine:cherrys')
+					minetest.sound_play("mario_eatghost", {pos = boardcenter,max_hear_distance = 6, object=player, loop=false})
+					player:get_inventory():add_item('main', 'mario:cherrys')
 				else
 					-- Ghost catches the player!
 					gamestate.lives = gamestate.lives - 1
 					if gamestate.lives < 1 then
 						minetest.chat_send_player(gamestate.player_name,"Game Over")
-						pacmine.game_end(self.gameid)
-						minetest.sound_play("pacmine_death", {pos = boardcenter,max_hear_distance = 20, object=player, loop=false})
+						mario.game_end(self.gameid)
+						minetest.sound_play("mario_death", {pos = boardcenter,max_hear_distance = 20, object=player, loop=false})
 
 					elseif gamestate.lives == 1 then
 						minetest.chat_send_player(gamestate.player_name,"This is your last life")
-						pacmine.game_reset(self.gameid, player)
+						mario.game_reset(self.gameid, player)
 					else
 						minetest.chat_send_player(gamestate.player_name,"You have ".. gamestate.lives .." lives left")
-						pacmine.game_reset(self.gameid, player)
+						mario.game_reset(self.gameid, player)
 					end
 				end
-				pacmine.update_hud(self.gameid, player)
+				mario.update_hud(self.gameid, player)
 
 			else
 				local vec = {x=p.x-s.x, y=p.y-s.y, z=p.z-s.z}
@@ -130,10 +144,13 @@ for i in ipairs(turtles) do
 		get_staticdata = function(self)
 			return (self.gameid or "") .. ";" .. (self.last_reset or "")
 		end,
-
+--]]
 		-- This function should load the saved state of the entity from a string
 		on_activate = function(self, staticdata)
-			self.object:set_armor_groups({immortal=1})
+			self:update_velocity()
+			self.object:setacceleration(self.acceleration)
+			--self.object:set_armor_groups({immortal=1})
+			--[[
 			if staticdata and staticdata ~= "" then
 				local data = string.split(staticdata, ";")
 				if #data == 2 then
@@ -141,7 +158,7 @@ for i in ipairs(turtles) do
 					self.last_reset = tonumber(data[2])
 				end
 			end
---]]
+			--]]
 		end
 	})
 end
