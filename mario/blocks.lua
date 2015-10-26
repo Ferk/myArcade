@@ -50,3 +50,49 @@ minetest.register_node("mario:coin", {
 	walkable = false,
 	groups = {cracky = 2},
 })
+
+local nbox = {
+		type = "fixed",
+		fixed = {
+			{-0.25, -0.5, -0.25, 0.25, -0.0625, 0.25},
+			{-0.3125, -0.4375, -0.3125, 0.3125, 0.4375, 0.3125},
+			{-0.375, -0.375, -0.375, 0.375, 0.375, 0.375},
+			{-0.375, -0.1875, -0.4375, 0.375, 0.3125, 0.4375},
+			{-0.4375, -0.1875, -0.5, 0.4375, 0.1875, 0.5},
+			{-0.1875, 0.4375, -0.1875, 0.1875, 0.5, 0.1875},
+			{-0.5, -0.1875, -0.4375, 0.5, 0.1875, 0.4375},
+			{-0.4375, -0.1875, -0.375, 0.4375, 0.3125, 0.375},
+		}
+	}
+
+minetest.register_node("mario:mushroom",{
+	description = "Mushroom",
+	tiles = {
+			"mario_mushroom_top.png",
+			"mario_mushroom_bottom.png",
+			"mario_mushroom.png",
+			"mario_mushroom.png",
+			"mario_mushroom.png",
+			"mario_mushroom.png",
+			},
+	drawtype = "nodebox",
+	paramtype = "light",
+	groups = {cracky = 3},
+	node_box = nbox,
+})
+
+minetest.register_node("mario:mushroom_green",{
+	description = "Green Mushroom",
+	tiles = {
+			"mario_mushroom_top_g.png",
+			"mario_mushroom_bottom.png",
+			"mario_mushroom_g.png",
+			"mario_mushroom_g.png",
+			"mario_mushroom_g.png",
+			"mario_mushroom_g.png",
+			},
+	drawtype = "nodebox",
+	paramtype = "light",
+	groups = {cracky = 3},
+	node_box = nbox,
+})

@@ -53,7 +53,7 @@ minetest.register_node("mario:exit",{
 			"mario_grey.png",
 			"mario_grey.png",
 			"mario_grey.png",
-			"mario_grey.png^mario_m.png",
+			"mario_grey.png^mario_exit.png",
 			},
 	drawtype = "normal",
 	paramtype = "light",
