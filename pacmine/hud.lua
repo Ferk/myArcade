@@ -11,7 +11,7 @@ function pacmine.update_hud(id, player)
 		pacmine.remove_hud(player)
 		return
 	end
-	local pellets_left = 252 - game.pellet_count
+	local pellets_left = game.pellet_total - game.pellet_count
 	local hudtext = "Score      " .. game.score
 		.. "\nLevel       " .. game.level
 		.. "\nLives       " .. game.lives

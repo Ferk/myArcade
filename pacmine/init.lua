@@ -71,7 +71,7 @@ minetest.register_node("pacmine:pellet_2", {
 })
 
 --The placer block for pacmine
-minetest.register_node("pacmine:block2",{
+minetest.register_node("pacmine:classic_board",{
 	description = "Pacman",
 	inventory_image = "pacmine_1.png",
 	tiles = {
@@ -88,11 +88,14 @@ minetest.register_node("pacmine:block2",{
 	light_source = 8,
 	groups = {cracky = 1},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
-		pacmine.game_start(pos, player)
+		pacmine.game_start(pos, player, {
+			schematic = minetest.get_modpath("pacmine").."/schems/pacmine.mts",
+			scorename = "pacmine:classic_board",
+		})
 	end,
 })
 --The placer block for pacmine mini
-minetest.register_node("pacmine:block",{
+minetest.register_node("pacmine:mini_board",{
 	description = "Pacman Mini",
 	inventory_image = "pacmine_1.png^pacmine_mini.png",
 	tiles = {
@@ -109,7 +112,28 @@ minetest.register_node("pacmine:block",{
 	light_source = 8,
 	groups = {cracky = 1},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
-		local schem = minetest.get_modpath("pacmine").."/schems/pacmini.mts"
-		minetest.place_schematic({x=pos.x,y=pos.y-1,z=pos.z-2},schem,0, "air", true)
+		pacmine.game_start(pos, player, {
+			schematic =  minetest.get_modpath("pacmine").."/schems/pacmini.mts",
+			player_start = {x=13,y=0.5,z=2},
+			ghost_start = {x=13,y=0.5,z=10},
+			speed = 1,
+			pellet_total = 91,
+			scorename = "pacmine:mini_board",
+		})
 	end,
+})
+
+minetest.register_alias("pacmine:block", "pacmine:mini_board")
+minetest.register_alias("pacmine:block2", "pacmine:normal_board")
+
+-- Register with the myhighscore mod
+myhighscore.register_game("pacmine:classic_board", {
+	description = "Pacmine",
+	icon = "pacmine_1.png",
+})
+
+-- Register with the myhighscore mod
+myhighscore.register_game("pacmine:mini_board", {
+	description = "Pacmine Mini",
+	icon = "pacmine_1.png^pacmine_mini.png",
 })

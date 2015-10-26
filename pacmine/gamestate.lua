@@ -15,7 +15,7 @@ local score_for_life_award = 5000
 -- Public functions (these can be called from any other place)
 
 -- Start the game from the spawn block at position "pos" activated by "player"
-function pacmine.game_start(pos, player)
+function pacmine.game_start(pos, player, gamedef)
 	-- create an id unique for the given position
 	local id = minetest.pos_to_string(pos)
 	local player_name = player:get_player_name()
@@ -28,17 +28,21 @@ function pacmine.game_start(pos, player)
 	end
 
 	-- Create a new game state with that id and add it to the game list
+	gamedef = gamedef or {}
 	gamestate = {
 		id = id,
 		player_name = player_name,
 		pos = pos,
-		start = {x=pos.x+14,y=pos.y+0.5,z=pos.z+16},
-		pellet_count = 0,
+		player_start = vector.add(pos, (gamedef.player_start or {x=14,y=0.5,z=16})),
+		ghost_start = vector.add(pos, (gamedef.ghost_start or {x=13,y=0.5,z=19})),
+		pellet_total =  gamedef.pellet_total or 252,
+		speed = gamedef.speed or 2,
+		lives = gamedef.lives or 3,
+		scorename = gamedef.scorename,
 		level = 1,
-		speed = 2,
-		lives = 3,
 		score = 0,
 		awarded_lives = 0,
+		pellet_count = 0,
 	}
  	pacmine.games[id] = gamestate
 	pacmine.players[id] = player
@@ -46,8 +50,8 @@ function pacmine.game_start(pos, player)
 	minetest.log("action","New pacmine game started at " .. id .. " by " .. gamestate.player_name)
 
 	-- place schematic
-	local schem = minetest.get_modpath("pacmine").."/schems/pacmine.mts"
-	minetest.place_schematic({x=pos.x,y=pos.y-1,z=pos.z-2},schem,0, "air", true)
+	local schem = gamedef
+	minetest.place_schematic({x=pos.x,y=pos.y-1,z=pos.z-2},gamedef.schematic,0, "air", true)
 
 	-- Set start positions
 	pacmine.game_reset(id, player)
@@ -65,12 +69,14 @@ function pacmine.game_end(id)
 		player:moveto(vector.add(gamestate.pos,{x=0.5,y=0.5,z=-1.5}))
 	end
 	-- Save score
-	local ranking = myhighscore.save_score("pacmine", {
-		player = gamestate.player_name,
-		score = gamestate.score
-	})
-	if ranking then
-		minetest.chat_send_player(gamestate.player_name, "You made it to the highscores! Your Ranking: " .. ranking)
+	if gamestate.scorename then
+		local ranking = myhighscore.save_score(gamestate.scorename, {
+			player = gamestate.player_name,
+			score = gamestate.score
+		})
+		if ranking then
+			minetest.chat_send_player(gamestate.player_name, "You made it to the highscores! Your Ranking: " .. ranking)
+		end
 	end
 	-- Clear the data
 	pacmine.games[id] = nil
@@ -90,34 +96,30 @@ function pacmine.game_reset(id, player)
 
 	-- Position the player
 	local player = player or minetest.get_player_by_name(gamestate.player_name)
-	player:setpos(gamestate.start)
+	player:setpos(gamestate.player_start)
 
 	-- Spawn the ghosts and assign the game id to each ghost
 	minetest.after(2, function()
 		if pacmine.games[id] and last_reset == pacmine.games[id].last_reset then
-			local pos = vector.add(gamestate.pos, {x=13,y=0.5,z=19})
-			local ghost = minetest.add_entity(pos, "pacmine:inky")
+			local ghost = minetest.add_entity(gamestate.ghost_start, "pacmine:inky")
 			ghost:get_luaentity().gameid = id
 		end
 	end)
 	minetest.after(12, function()
 		if pacmine.games[id] and last_reset == pacmine.games[id].last_reset then
-			local pos = vector.add(gamestate.pos, {x=15,y=0.5,z=19})
-			local ghost = minetest.add_entity(pos, "pacmine:pinky")
+			local ghost = minetest.add_entity(gamestate.ghost_start, "pacmine:pinky")
 			ghost:get_luaentity().gameid = id
 		end
 	end)
 	minetest.after(22, function()
 		if pacmine.games[id] and last_reset == pacmine.games[id].last_reset then
-			local pos = vector.add(gamestate.pos, {x=13,y=0.5,z=18})
-			local ghost = minetest.add_entity(pos, "pacmine:blinky")
+			local ghost = minetest.add_entity(gamestate.ghost_start, "pacmine:blinky")
 			ghost:get_luaentity().gameid = id
 		end
 	end)
 	minetest.after(32, function()
 		if pacmine.games[id] and last_reset == pacmine.games[id].last_reset then
-			local pos = vector.add(gamestate.pos, {x=15,y=0.5,z=18})
-			local ghost = minetest.add_entity(pos, "pacmine:clyde")
+			local ghost = minetest.add_entity(gamestate.ghost_start, "pacmine:clyde")
 			ghost:get_luaentity().gameid = id
 		end
 	end)
@@ -156,7 +158,7 @@ function pacmine.add_fruit(id)
 		node.name = "pacmine:apple"
 		node.param2 = 3
 	end
-	local pos = vector.add(gamestate.start,{x=0,y=-1,z=0})
+	local pos = vector.add(gamestate.player_start,{x=0,y=-1,z=0})
 	minetest.set_node(pos, node)
 	print(node.param2)
 	-- Set the timer for the fruit to disappear
@@ -176,7 +178,7 @@ function pacmine.on_player_got_pellet(player)
 
 	if gamestate.pellet_count == 70 or gamestate.pellet_count == 180 then
 		pacmine.add_fruit(gamestate.id)
-	elseif gamestate.pellet_count >= 252 then -- 252
+	elseif gamestate.pellet_count >= gamestate.pellet_total then
 		minetest.chat_send_player(name, "You cleared the board!")
 
 		pacmine.remove_ghosts(gamestate.id)
@@ -326,10 +328,4 @@ minetest.register_chatcommand("pacmine_exit", {
 			minetest.chat_send_player(name, "You are not currently in a pacmine game")
 		end
 	end
-})
-
--- Register with the myhighscore mod
-myhighscore.register_game("pacmine", {
-	description = "Pacmine",
-	icon = "pacmine_1.png",
 })

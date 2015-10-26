@@ -85,7 +85,7 @@ for i in ipairs(ghosts) do
 
 				if gamestate.power_pellet then
 					-- Player eats ghost! move it to spawn
-					local ghost_spawn = vector.add(gamestate.pos, {x=13,y=0.5,z=19})
+					local ghost_spawn = gamestate.ghost_start
 					self.object:setpos(ghost_spawn)
 					-- set the timer negative so it'll have to wait extra time
 					self.timer = -ghosts_death_delay
