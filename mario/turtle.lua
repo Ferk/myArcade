@@ -27,7 +27,7 @@ for i in ipairs(turtles) do
 			"mario_turtle.png",
 		},
 
-		collisionbox = {-0.25, -0.5, -0.25, 0.25, 0.4, 0.25},
+		collisionbox = {-0.25, -0.25, -0.25, 0.25, 0.25, 0.25},
 		is_visible = true,
 		automatic_rotate = true,
 		automatic_face_movement_dir = -90, -- set yaw direction in degrees, false to disable
