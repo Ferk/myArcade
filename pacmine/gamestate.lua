@@ -35,10 +35,12 @@ function pacmine.game_start(pos, player, gamedef)
 		pos = pos,
 		player_start = vector.add(pos, (gamedef.player_start or {x=14,y=0.5,z=16})),
 		ghost_start = vector.add(pos, (gamedef.ghost_start or {x=13,y=0.5,z=19})),
+		ghost_amount = gamedef.ghost_amount or 4,
 		pellet_total =  gamedef.pellet_total or 252,
 		speed = gamedef.speed or 2,
 		lives = gamedef.lives or 3,
 		scorename = gamedef.scorename,
+		schematic = gamedef.schematic,
 		level = 1,
 		score = 0,
 		awarded_lives = 0,
@@ -50,7 +52,6 @@ function pacmine.game_start(pos, player, gamedef)
 	minetest.log("action","New pacmine game started at " .. id .. " by " .. gamestate.player_name)
 
 	-- place schematic
-	local schem = gamedef
 	minetest.place_schematic({x=pos.x,y=pos.y-1,z=pos.z-2},gamedef.schematic,0, "air", true)
 
 	-- Set start positions
@@ -105,24 +106,30 @@ function pacmine.game_reset(id, player)
 			ghost:get_luaentity().gameid = id
 		end
 	end)
-	minetest.after(12, function()
-		if pacmine.games[id] and last_reset == pacmine.games[id].last_reset then
-			local ghost = minetest.add_entity(gamestate.ghost_start, "pacmine:pinky")
-			ghost:get_luaentity().gameid = id
-		end
-	end)
-	minetest.after(22, function()
-		if pacmine.games[id] and last_reset == pacmine.games[id].last_reset then
-			local ghost = minetest.add_entity(gamestate.ghost_start, "pacmine:blinky")
-			ghost:get_luaentity().gameid = id
-		end
-	end)
-	minetest.after(32, function()
-		if pacmine.games[id] and last_reset == pacmine.games[id].last_reset then
-			local ghost = minetest.add_entity(gamestate.ghost_start, "pacmine:clyde")
-			ghost:get_luaentity().gameid = id
-		end
-	end)
+	if gamestate.ghost_amount >= 2 then
+		minetest.after(12, function()
+			if pacmine.games[id] and last_reset == pacmine.games[id].last_reset then
+				local ghost = minetest.add_entity(gamestate.ghost_start, "pacmine:pinky")
+				ghost:get_luaentity().gameid = id
+			end
+		end)
+	end
+	if gamestate.ghost_amount >= 3 then
+		minetest.after(22, function()
+			if pacmine.games[id] and last_reset == pacmine.games[id].last_reset then
+				local ghost = minetest.add_entity(gamestate.ghost_start, "pacmine:blinky")
+				ghost:get_luaentity().gameid = id
+			end
+		end)
+	end
+	if gamestate.ghost_amount >= 4 then
+		minetest.after(32, function()
+			if pacmine.games[id] and last_reset == pacmine.games[id].last_reset then
+				local ghost = minetest.add_entity(gamestate.ghost_start, "pacmine:clyde")
+				ghost:get_luaentity().gameid = id
+			end
+		end)
+	end
 end
 
 -- Remove all the ghosts from the board with the given id
@@ -147,20 +154,15 @@ function pacmine.add_fruit(id)
 	-- Different fruit will be used depending on the level
 	if gamestate.level == 1 then
 		node.name = "pacmine:cherrys"
-		node.param2 = 3
 	elseif gamestate.level == 2 then
 		node.name = "pacmine:strawberry"
-		node.param2 = 3
 	elseif gamestate.level < 5 then
 		node.name = "pacmine:orange"
-		node.param2 = 3
 	else
 		node.name = "pacmine:apple"
-		node.param2 = 3
 	end
 	local pos = vector.add(gamestate.player_start,{x=0,y=-1,z=0})
 	minetest.set_node(pos, node)
-	print(node.param2)
 	-- Set the timer for the fruit to disappear
 	minetest.get_node_timer(pos):start(math.random(20, 30))
 end
@@ -189,8 +191,7 @@ function pacmine.on_player_got_pellet(player)
 		minetest.after(3.0, function()
 			minetest.chat_send_player(name, "Starting Level "..gamestate.level)
 			-- place schematic
-			local schem = minetest.get_modpath("pacmine").."/schems/pacmine.mts"
-			minetest.place_schematic(vector.add(gamestate.pos, {x=0,y=-1,z=-2}),schem,0, "air", true)
+			minetest.place_schematic(vector.add(gamestate.pos, {x=0,y=-1,z=-2}),gamestate.schematic,0, "air", true)
 
 			-- Set start positions
 			pacmine.game_reset(gamestate.id, player)
