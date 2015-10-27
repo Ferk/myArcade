@@ -104,16 +104,7 @@ for i in ipairs(turtles) do
 			if distance < 1.5 then
 				-- player touches ghost!!
 
-				if gamestate.power_pellet then
-					-- Player eats ghost! move it to spawn
-					local ghost_spawn = vector.add(gamestate.pos, {x=13,y=0.5,z=19})
-					self.object:setpos(ghost_spawn)
-					-- set the timer negative so it'll have to wait extra time
-					self.timer = -ghosts_death_delay
-					-- play sound and reward player
-					minetest.sound_play("mario_eatghost", {pos = boardcenter,max_hear_distance = 6, object=player, loop=false})
-					player:get_inventory():add_item('main', 'mario:cherrys')
-				else
+
 					-- Ghost catches the player!
 					gamestate.lives = gamestate.lives - 1
 					if gamestate.lives < 1 then
@@ -128,8 +119,10 @@ for i in ipairs(turtles) do
 						minetest.chat_send_player(gamestate.player_name,"You have ".. gamestate.lives .." lives left")
 						mario.game_reset(self.gameid, player)
 					end
-				end
+				--end
 				mario.update_hud(self.gameid, player)
+		
+
 
 			else
 				local vec = {x=p.x-s.x, y=p.y-s.y, z=p.z-s.z}
