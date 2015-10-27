@@ -116,6 +116,7 @@ minetest.register_node("pacmine:mini_board",{
 			schematic =  minetest.get_modpath("pacmine").."/schems/pacmini.mts",
 			player_start = {x=13,y=0.5,z=2},
 			ghost_start = {x=13,y=0.5,z=10},
+			ghost_amount = 2,
 			speed = 1,
 			pellet_total = 91,
 			scorename = "pacmine:mini_board",
