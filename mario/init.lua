@@ -5,7 +5,7 @@ dofile(minetest.get_modpath("mario").."/blocks.lua")
 dofile(minetest.get_modpath("mario").."/portal.lua")
 dofile(minetest.get_modpath("mario").."/turtle.lua")
 dofile(minetest.get_modpath("mario").."/gamestate.lua")
-
+dofile(minetest.get_modpath("mario").."/hud.lua")
 
 minetest.register_node("mario:placer",{
 	description = "Reset",
@@ -24,14 +24,12 @@ minetest.register_node("mario:placer",{
 		local schem = minetest.get_modpath("mario").."/schems/mario.mts"
 		minetest.place_schematic({x=pos.x-1,y=pos.y-2,z=pos.z-2},schem,0, "air", true)
 		player:setpos({x=pos.x+16,y=pos.y+0.1,z=pos.z+1})
-		print(name)
 		player:set_physics_override(1,1,0.3,true,false)
 
-		-- Left Turtle
-		minetest.add_entity({x=pos.x+3,y=pos.y+12,z=pos.z+1}, "mario:turtle1")
-		-- Right Turtle
-		local turtler = minetest.add_entity({x=pos.x+30,y=pos.y+12,z=pos.z+1}, "mario:turtle1"):get_luaentity()
-		turtler.direction = {x=-1,y=0,z=0}
+		mario.game_start(pos, player, {
+			schematic = minetest.get_modpath("mario").."/schems/mario.mts",
+			scorename = "mario:classic_board",
+		})
 
 		minetest.sound_play("mario-game-start", {pos = pos,max_hear_distance = 40,gain = 10.0,})
 	end,
@@ -54,6 +52,7 @@ minetest.register_node("mario:placer2",{
 		minetest.place_schematic({x=pos.x-1,y=pos.y-1,z=pos.z-2},schem,0, "air", true)
 	end,
 })
+
 minetest.register_node("mario:exit",{
 	description = "Exit",
 	tiles = {
@@ -72,4 +71,10 @@ minetest.register_node("mario:exit",{
 		print(name)
 		player:set_physics_override(1,1,1,true,false)
 	end,
+})
+
+-- Register with the myhighscore mod
+myhighscore.register_game("mario:classic_board", {
+	description = "Mario",
+	icon = "mario_border.png^mario_m.png",
 })

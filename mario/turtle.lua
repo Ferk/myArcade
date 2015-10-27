@@ -47,30 +47,19 @@ for i in ipairs(turtles) do
 			if self.timer < 1 then return end
 			self.timer = 0
 
-			local velocity = self.object:getvelocity()
-
-			-- if our velocity is close to zero, turn around (we are in collision)
-			if math.abs(velocity.x) < 0.25 then
-				self.direction.x = -self.direction.x
-				if(self.direction.x == 0) then
-					self.direction.x = 1
-				end
-			end
-			self:update_velocity()
-		end,
---[[
 			-- Do we have game state? if not just die
 			local gamestate = mario.games[self.gameid]
 			if not gamestate then
-				minetest.log("action", "Removing pacman ghost without game assigned")
+				minetest.log("action", "Removing turtle without game assigned")
 				self.object:remove()
 				return
 			end
+
 			-- Make sure we are in the right state by keeping track of the reset time
 			-- if the reset time changed it's likely the game got resetted while the entity wasn't loaded
 			if self.last_reset then
 				if self.last_reset ~= gamestate.last_reset then
-					minetest.log("action", "Removing pacman ghost remaining after reset ")
+					minetest.log("action", "Removing turtle remaining after reset ")
 					self.object:remove()
 				end
 			else
@@ -83,6 +72,24 @@ for i in ipairs(turtles) do
 			end
 			local player = self.target
 
+			-- find distance to the player
+			local dist = vector.distance(self.object:getpos(), player:getpos())
+			if dist < 1 then
+				mario.on_player_death(self.gameid, player)
+			end
+
+			local velocity = self.object:getvelocity()
+
+			-- if our velocity is close to zero, turn around (we are in collision)
+			if math.abs(velocity.x) < 0.25 then
+				self.direction.x = -self.direction.x
+				if(self.direction.x == 0) then
+					self.direction.x = 1
+				end
+			end
+			self:update_velocity()
+		end,
+--[[
 			-- If there's no player just stop
 			if not player then
 				self.set_velocity(self, 0)
@@ -139,18 +146,18 @@ for i in ipairs(turtles) do
 				end
 			end
 		end,
+		--]]
 
 		-- This function should return the saved state of the entity in a string
 		get_staticdata = function(self)
 			return (self.gameid or "") .. ";" .. (self.last_reset or "")
 		end,
---]]
+
 		-- This function should load the saved state of the entity from a string
 		on_activate = function(self, staticdata)
 			self:update_velocity()
 			self.object:setacceleration(self.acceleration)
-			--self.object:set_armor_groups({immortal=1})
-			--[[
+			self.object:set_armor_groups({immortal=1})
 			if staticdata and staticdata ~= "" then
 				local data = string.split(staticdata, ";")
 				if #data == 2 then
@@ -158,7 +165,6 @@ for i in ipairs(turtles) do
 					self.last_reset = tonumber(data[2])
 				end
 			end
-			--]]
 		end
 	})
 end

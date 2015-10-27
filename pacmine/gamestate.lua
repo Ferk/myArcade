@@ -23,7 +23,7 @@ function pacmine.game_start(pos, player, gamedef)
 	-- make sure any previous game with the same id has ended
 	local gamestate = pacmine.games[id]
 	if gamestate then
-		minetest.chat_send_player(name, "A game is already in progress for player " .. gamestate.player_name)
+		minetest.chat_send_player(player_name, "A game is already in progress for player " .. gamestate.player_name)
 		return
 	end
 

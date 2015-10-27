@@ -20,7 +20,7 @@ function mario.game_start(pos, player, gamedef)
 	-- make sure any previous game with the same id has ended
 	local gamestate = mario.games[id]
 	if gamestate then
-		minetest.chat_send_player(name, "A game is already in progress for player " .. gamestate.player_name)
+		minetest.chat_send_player(player_name, "A game is already in progress for player " .. gamestate.player_name)
 		return
 	end
 
@@ -31,8 +31,8 @@ function mario.game_start(pos, player, gamedef)
 		player_name = player_name,
 		pos = pos,
 		player_start = vector.add(pos, (gamedef.player_start or {x=16,y=0,z=1})),
-		turtle1_start = vector.add(pos, (gamedef.turtle_start or {x=3,y=0.5,z=12})),
-		turtle2_start = vector.add(pos, (gamedef.turtle_start or {x=30,y=0.5,z=12})),
+		turtle1_start = vector.add(pos, (gamedef.turtle1_start or {x=3,y=12,z=1})),
+		turtle2_start = vector.add(pos, (gamedef.turtle1_start or {x=30,y=12,z=1})),
 		coin_total =  gamedef.coin_total or 84,
 		speed = gamedef.speed or 2,
 		lives = gamedef.lives or 3,
@@ -84,6 +84,7 @@ end
 -- Resets the game to the start positions
 function mario.game_reset(id, player)
 	local gamestate = mario.games[id]
+	if not gamestate then return end
 	minetest.log("action", "resetting game " .. id)
 
 	-- Save the time when the game was last resetted (to solve timing issues)
@@ -98,26 +99,33 @@ function mario.game_reset(id, player)
 	-- Spawn the turtles and assign the game id to each turtle
 	minetest.after(2, function()
 		if mario.games[id] and last_reset == mario.games[id].last_reset then
-			local turtle = minetest.add_entity(gamestate.turtle_start, "mario:turtle")
-			turtle:get_luaentity().gameid = id
+			local turtle = minetest.add_entity(gamestate.turtle1_start, "mario:turtle1")
+			turtle = turtle:get_luaentity()
+			turtle.gameid = id
+			turtle.direction = {x=1,y=0,z=0}
 		end
 	end)
 	minetest.after(2, function()
 		if mario.games[id] and last_reset == mario.games[id].last_reset then
-			local turtle = minetest.add_entity(gamestate.turtle_start, "mario:turtle2")
-			turtle:get_luaentity().gameid = id
+			local turtle = minetest.add_entity(gamestate.turtle2_start, "mario:turtle2")
+			turtle = turtle:get_luaentity()
+			turtle.gameid = id
+			turtle.direction = {x=1,y=0,z=0}
 		end
 	end)
 	minetest.after(45, function()
 		if mario.games[id] and last_reset == mario.games[id].last_reset then
-			local turtle = minetest.add_entity(gamestate.turtle_start, "mario:turtle3")
-			turtle:get_luaentity().gameid = id
+			local turtle = minetest.add_entity(gamestate.turtle1_start, "mario:turtle3")
+			turtle = turtle:get_luaentity()
+			turtle.gameid = id
+			turtle.direction = {x=-1,y=0,z=0}
 		end
 	end)
 	minetest.after(45, function()
 		if mario.games[id] and last_reset == mario.games[id].last_reset then
-			local turtle = minetest.add_entity(gamestate.turtle_start, "mario:turtle4")
-			turtle:get_luaentity().gameid = id
+			local turtle = minetest.add_entity(gamestate.turtle2_start, "mario:turtle4"):get_luaentity()
+			turtle.gameid = id
+			turtle.direction = {x=-1,y=0,z=0}
 		end
 	end)
 end
@@ -202,6 +210,27 @@ function mario.on_player_got_mushroom(player, points)
 	minetest.sound_play("mario-bonus", {pos = pos, max_hear_distance = 6})
 end
 
+-- The player died!
+function mario.on_player_death(id, player)
+	local gamestate = mario.games[id]
+	if not gamestate then return end
+
+	gamestate.lives = gamestate.lives - 1
+	if gamestate.lives < 1 then
+		minetest.chat_send_player(gamestate.player_name,"Game Over")
+		mario.game_end(id)
+		minetest.sound_play("mario-game-over", {max_hear_distance = 20, object=player})
+	elseif gamestate.lives == 1 then
+		minetest.chat_send_player(gamestate.player_name,"This is your last life")
+		mario.game_reset(id, player)
+		minetest.sound_play("mario-continue", {max_hear_distance = 10, object=player})
+	else
+		minetest.chat_send_player(gamestate.player_name,"You have ".. gamestate.lives .." lives left")
+		mario.game_reset(id, player)
+		minetest.sound_play("mario-continue", {max_hear_distance = 10, object=player})
+	end
+end
+
 -- Get the game that the given player is playing
 function mario.get_game_by_player(player_name)
 	for _,gamestate in pairs(mario.games) do
@@ -219,18 +248,15 @@ end
 local function on_player_gamestep(player, gameid)
 	local player_pos = player:getpos()
 	local positions = {
-		{x=0.5,y=0.5,z=0.5},
-		{x=-0.5,y=0.5,z=-0.5},
+		{x=0.5,y=0.5,z=0.25},
+		{x=-0.5,y=0.5,z=-0.25},
 	}
 	for _,pos in pairs(positions) do
 		pos = vector.add(player_pos, pos)
 		local node = minetest.get_node(pos)
-		if node.name == "mario:coin_1" then
+		if node.name == "mario:coin" then
 			minetest.remove_node(pos)
 			mario.on_player_got_coin(player)
-		elseif node.name == "mario:coin_2" then
-			minetest.remove_node(pos)
-			mario.on_player_got_power_coin(player)
 		elseif node.name == "mario:cherrys" then
 			minetest.remove_node(pos)
 			mario.on_player_got_mushroom(player, 100)
