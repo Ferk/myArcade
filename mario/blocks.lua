@@ -80,6 +80,7 @@ minetest.register_node("mario:mushroom",{
 			},
 	drawtype = "nodebox",
 	paramtype = "light",
+	walkable = false,
 	groups = {cracky = 3},
 	node_box = nbox,
 	on_destruct = function(pos)
@@ -99,6 +100,7 @@ minetest.register_node("mario:mushroom_green",{
 			},
 	drawtype = "nodebox",
 	paramtype = "light",
+	walkable = false,
 	groups = {cracky = 3},
 	node_box = nbox,
 	on_destruct = function(pos)

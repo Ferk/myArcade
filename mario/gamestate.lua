@@ -31,8 +31,8 @@ function mario.game_start(pos, player, gamedef)
 		player_name = player_name,
 		pos = pos,
 		player_start = vector.add(pos, (gamedef.player_start or {x=16,y=0,z=1})),
-		turtle1_start = vector.add(pos, (gamedef.turtle_start or {x=3,y=0.5,z=12})),
-		turtle2_start = vector.add(pos, (gamedef.turtle_start or {x=30,y=0.5,z=12})),
+		turtle1_start = vector.add(pos, (gamedef.turtle1_start or {x=3,y=0.5,z=12})),
+		turtle2_start = vector.add(pos, (gamedef.turtle2_start or {x=30,y=0.5,z=12})),
 		coin_total =  gamedef.coin_total or 84,
 		speed = gamedef.speed or 2,
 		lives = gamedef.lives or 3,
@@ -94,29 +94,30 @@ function mario.game_reset(id, player)
 	-- Position the player
 	local player = player or minetest.get_player_by_name(gamestate.player_name)
 	player:setpos(gamestate.player_start)
+	local pos = gamestate.pos
 
 	-- Spawn the turtles and assign the game id to each turtle
 	minetest.after(2, function()
 		if mario.games[id] and last_reset == mario.games[id].last_reset then
-			local turtle = minetest.add_entity(gamestate.turtle_start, "mario:turtle")
+			local turtle = minetest.add_entity({x=pos.x+3,y=pos.y+12,z=pos.z+1}, "mario:turtle1")
 			turtle:get_luaentity().gameid = id
 		end
 	end)
 	minetest.after(2, function()
 		if mario.games[id] and last_reset == mario.games[id].last_reset then
-			local turtle = minetest.add_entity(gamestate.turtle_start, "mario:turtle2")
+			local turtle = minetest.add_entity({x=pos.x+30,y=pos.y+12,z=pos.z+1}, "mario:turtle1")
 			turtle:get_luaentity().gameid = id
 		end
 	end)
 	minetest.after(45, function()
 		if mario.games[id] and last_reset == mario.games[id].last_reset then
-			local turtle = minetest.add_entity(gamestate.turtle_start, "mario:turtle3")
+			local turtle = minetest.add_entity({x=pos.x+3,y=pos.y+12,z=pos.z+1}, "mario:turtle1")
 			turtle:get_luaentity().gameid = id
 		end
 	end)
 	minetest.after(45, function()
 		if mario.games[id] and last_reset == mario.games[id].last_reset then
-			local turtle = minetest.add_entity(gamestate.turtle_start, "mario:turtle4")
+			local turtle = minetest.add_entity({x=pos.x+30,y=pos.y+12,z=pos.z+1}, "mario:turtle1")
 			turtle:get_luaentity().gameid = id
 		end
 	end)
@@ -142,9 +143,9 @@ function mario.add_mushroom(id)
 	if not gamestate then return end
 	local node = {}
 	-- Different mushroom will be used depending on the level
-	if gamestate.level == 1 then
+	--if gamestate.level == 1 then
 		node.name = "mario:mushroom"
-	end
+	--end
 	local pos = vector.add(gamestate.player_start,{x=0,y=12,z=0})
 	minetest.set_node(pos, node)
 	print(node.param2)
@@ -163,7 +164,7 @@ function mario.on_player_got_coin(player)
 	mario.update_hud(gamestate.id, player)
 	minetest.sound_play("mario-coin", {object = player, max_hear_distance = 6})
 
-	if gamestate.coin_count == 70 or gamestate.coin_count == 180 then
+	if gamestate.coin_count == 10 then
 		mario.add_mushroom(gamestate.id)
 	elseif gamestate.coin_count >= gamestate.coin_total then
 		minetest.chat_send_player(name, "You cleared the board!")
@@ -225,24 +226,12 @@ local function on_player_gamestep(player, gameid)
 	for _,pos in pairs(positions) do
 		pos = vector.add(player_pos, pos)
 		local node = minetest.get_node(pos)
-		if node.name == "mario:coin_1" then
+		if node.name == "mario:coin" then
 			minetest.remove_node(pos)
 			mario.on_player_got_coin(player)
-		elseif node.name == "mario:coin_2" then
+		elseif node.name == "mario:mushroom" then
 			minetest.remove_node(pos)
-			mario.on_player_got_power_coin(player)
-		elseif node.name == "mario:cherrys" then
-			minetest.remove_node(pos)
-			mario.on_player_got_mushroom(player, 100)
-		elseif node.name == "mario:strawberry" then
-			minetest.remove_node(pos)
-			mario.on_player_got_mushroom(player, 300)
-		elseif node.name == "mario:orange" then
-			minetest.remove_node(pos)
-			mario.on_player_got_mushroom(player, 500)
-		elseif node.name == "mario:apple" then
-			minetest.remove_node(pos)
-			mario.on_player_got_mushroom(player, 700)
+			mario.on_player_got_mushroom(player, 15)
 		end
 	end
 end
