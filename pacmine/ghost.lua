@@ -91,7 +91,9 @@ for i in ipairs(ghosts) do
 					self.timer = -ghosts_death_delay
 					-- play sound and reward player
 					minetest.sound_play("pacmine_eatghost", {pos = boardcenter,max_hear_distance = 6, object=player, loop=false})
-					player:get_inventory():add_item('main', 'pacmine:cherrys')
+					gamestate.score = gamestate.score + 200
+					pacmine.update_hud(gamestate.id, player)
+					minetest.chat_send_player(gamestate.player_name,"You ate a ghost!")
 				else
 					-- Ghost catches the player!
 					gamestate.lives = gamestate.lives - 1
