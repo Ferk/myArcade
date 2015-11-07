@@ -35,6 +35,10 @@ minetest.register_node("pacmine:pellet_1", {
 			{0, 0, 0, 0, 0, 0},
 		}
 	},
+	on_player_collision = function(pos, player, gameid)
+		minetest.remove_node(pos)
+		pacmine.on_player_got_pellet(player)
+	end
 })
 
 --Power Pellets. Need to make these do something
@@ -68,6 +72,10 @@ minetest.register_node("pacmine:pellet_2", {
 			{0, 0, 0, 0, 0, 0},
 		}
 	},
+	on_player_collision = function(pos, player, gameid)
+		minetest.remove_node(pos)
+		pacmine.on_player_got_power_pellet(player)
+	end
 })
 
 --The placer block for pacmine

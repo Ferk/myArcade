@@ -262,24 +262,10 @@ local function on_player_gamestep(player, gameid)
 	for _,pos in pairs(positions) do
 		pos = vector.add(player_pos, pos)
 		local node = minetest.get_node(pos)
-		if node.name == "pacmine:pellet_1" then
-			minetest.remove_node(pos)
-			pacmine.on_player_got_pellet(player)
-		elseif node.name == "pacmine:pellet_2" then
-			minetest.remove_node(pos)
-			pacmine.on_player_got_power_pellet(player)
-		elseif node.name == "pacmine:cherrys" then
-			minetest.remove_node(pos)
-			pacmine.on_player_got_fruit(player, 100)
-		elseif node.name == "pacmine:strawberry" then
-			minetest.remove_node(pos)
-			pacmine.on_player_got_fruit(player, 300)
-		elseif node.name == "pacmine:orange" then
-			minetest.remove_node(pos)
-			pacmine.on_player_got_fruit(player, 500)
-		elseif node.name == "pacmine:apple" then
-			minetest.remove_node(pos)
-			pacmine.on_player_got_fruit(player, 700)
+		local nodedef = minetest.registered_nodes[node.name]
+
+		if nodedef and nodedef.on_player_collision then
+			nodedef.on_player_collision(pos, player, gameid)
 		end
 	end
 end

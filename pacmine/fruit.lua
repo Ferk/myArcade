@@ -6,17 +6,17 @@ local sbox = {
 		type = "fixed",
 		fixed = {{0, 0, 0, 0, 0, 0}}
 	}
-	
+
 local pelletitems = {
-	{"cherrys", "Cherrys","2"},
-	{"apple", "Apple","3"},
-	{"orange", "Orange","4"},
-	{"strawberry", "Strawberry","2"},
+	{"cherrys", "Cherrys","100"},
+	{"strawberry", "Strawberry","300"},
+	{"orange", "Orange","500"},
+	{"apple", "Apple","700"},
 	}
 for i in ipairs (pelletitems) do
 	local itm = pelletitems[i][1]
 	local desc = pelletitems[i][2]
-	local hlth = pelletitems[i][3]
+	local points = pelletitems[i][3]
 
 minetest.register_node("pacmine:"..itm,{
 	description = desc,
@@ -34,6 +34,10 @@ minetest.register_node("pacmine:"..itm,{
 	collision_box = cbox,
 	on_timer = function(pos, dtime)
 		minetest.remove_node(pos)
+	end,
+	on_player_collision = function(pos, player, gameid)
+		minetest.remove_node(pos)
+		pacmine.on_player_got_fruit(player, points)
 	end
 })
 end

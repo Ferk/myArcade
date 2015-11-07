@@ -52,6 +52,10 @@ minetest.register_node("mario:coin", {
 	on_destruct = function(pos)
 		minetest.sound_play("mario-coin", {pos = pos,max_hear_distance = 40,gain = 10.0,})
 	end,
+	on_player_collision = function(pos, player, gameid)
+		minetest.remove_node(pos)
+		mario.on_player_got_coin(player)
+	end
 })
 
 local nbox = {
@@ -86,6 +90,10 @@ minetest.register_node("mario:mushroom",{
 	on_destruct = function(pos)
 		minetest.sound_play("mario-bonus", {pos = pos,max_hear_distance = 40,gain = 10.0,})
 	end,
+	on_player_collision = function(pos, player, gameid)
+		minetest.remove_node(pos)
+		mario.on_player_got_mushroom(player, 15)
+	end
 })
 
 minetest.register_node("mario:mushroom_green",{
@@ -106,4 +114,8 @@ minetest.register_node("mario:mushroom_green",{
 	on_destruct = function(pos)
 		minetest.sound_play("mario-1-up", {pos = pos,max_hear_distance = 40,gain = 10.0,})
 	end,
+	on_player_collision = function(pos, player, gameid)
+		minetest.remove_node(pos)
+		mario.on_player_got_mushroom(player, 15)
+	end
 })

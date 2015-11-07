@@ -262,18 +262,10 @@ local function on_player_gamestep(player, gameid)
 	for _,pos in pairs(positions) do
 		pos = vector.add(player_pos, pos)
 		local node = minetest.get_node(pos)
-		if node.name == "mario:coin" then
-			minetest.remove_node(pos)
-			mario.on_player_got_coin(player)
-		elseif node.name == "mario:mushroom" then
-			minetest.remove_node(pos)
-			mario.on_player_got_mushroom(player, 15)
-		elseif node.name == "mario:portal_right" then
-			player_pos.x = player_pos.x -31
-			player:setpos(player_pos)
-		elseif node.name == "mario:portal_left" then
-			player_pos.x = player_pos.x +31
-			player:setpos(player_pos)
+		local nodedef = minetest.registered_nodes[node.name]
+
+		if nodedef and nodedef.on_player_collision then
+			nodedef.on_player_collision(pos, player, gameid)
 		end
 	end
 end
