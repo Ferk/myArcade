@@ -46,31 +46,3 @@ minetest.register_abm({
 		end
 	end
 })
-minetest.register_abm({
-	nodenames = {"mario:portal_left"},
-	interval = 0.5,
-	chance = 1,
-	action = function(pos, node, active_object_count, active_object_count_wider)
-		local objs = minetest.env:get_objects_inside_radius(pos, 2)
-		for k, player in pairs(objs) do
-			if player:get_player_name() then
-
-				player:setpos({x=pos.x+31,y=pos.y+0.5,z=pos.z})
-			end
-		end
-	end
-})
-minetest.register_abm({
-	nodenames = {"mario:portal_right"},
-	interval = 0.5,
-	chance = 1,
-	action = function(pos, node, active_object_count, active_object_count_wider)
-		local objs = minetest.env:get_objects_inside_radius(pos, 2)
-		for k, player in pairs(objs) do
-			if player:get_player_name() then
-
-				player:setpos({x=pos.x-31,y=pos.y+0.5,z=pos.z})
-			end
-		end
-	end
-})

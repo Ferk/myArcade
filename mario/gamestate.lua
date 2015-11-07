@@ -268,6 +268,12 @@ local function on_player_gamestep(player, gameid)
 		elseif node.name == "mario:mushroom" then
 			minetest.remove_node(pos)
 			mario.on_player_got_mushroom(player, 15)
+		elseif node.name == "mario:portal_right" then
+			player_pos.x = player_pos.x -31
+			player:setpos(player_pos)
+		elseif node.name == "mario:portal_left" then
+			player_pos.x = player_pos.x +31
+			player:setpos(player_pos)
 		end
 	end
 end
