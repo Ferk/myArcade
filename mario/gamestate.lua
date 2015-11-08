@@ -153,19 +153,15 @@ function mario.remove_turtles(id)
 end
 
 -- Add a mushroom to the game board
-function mario.add_mushroom(id)
+function mario.add_mushroom(id, mushroomtype, offset)
 	local gamestate = mario.games[id]
 	if not gamestate then return end
 	local node = {}
-	-- Different mushroom will be used depending on the level
-	--if gamestate.level == 1 then
-		node.name = "mario:mushroom"
-	--end
-	local pos = vector.add(gamestate.player_start,{x=0,y=12,z=0})
+	node.name = mushroomtype or "mario:mushroom"
+	local pos = vector.add(gamestate.player_start, offset or {x=0,y=12,z=0})
 	minetest.set_node(pos, node)
-	print(node.param2)
 	-- Set the timer for the mushroom to disappear
-	minetest.get_node_timer(pos):start(60)
+	minetest.get_node_timer(pos):start(120)
 end
 
 -- A player got a coin, update the state
@@ -180,7 +176,9 @@ function mario.on_player_got_coin(player)
 	minetest.sound_play("mario-coin", {object = player, max_hear_distance = 6})
 
 	if gamestate.coin_count == 10 then
-		mario.add_mushroom(gamestate.id)
+		mario.add_mushroom(gamestate.id, "mario:mushroom", {x=0,y=12,z=0})
+	elseif gamestate.coin_count ==  gamestate.coin_total - 10 then
+		mario.add_mushroom(gamestate.id, "mario:mushroom_green", {x=0,y=-1,z=0})
 	elseif gamestate.coin_count >= gamestate.coin_total then
 		minetest.chat_send_player(name, "You cleared the board!")
 
@@ -215,7 +213,7 @@ function mario.on_player_got_mushroom(player, points)
 	if not gamestate then return end
 	gamestate.score = gamestate.score + points
 	minetest.chat_send_player(name, points .. " bonus points!")
-	minetest.sound_play("mario-bonus", {pos = pos, max_hear_distance = 6})
+	minetest.sound_play("mario-bonus", {object = player, max_hear_distance = 6})
 end
 
 -- The player died!

@@ -87,8 +87,8 @@ minetest.register_node("mario:mushroom",{
 	walkable = false,
 	groups = {cracky = 3},
 	node_box = nbox,
-	on_destruct = function(pos)
-		minetest.sound_play("mario-bonus", {pos = pos,max_hear_distance = 40,gain = 10.0,})
+	on_timer = function(pos, dtime)
+		minetest.remove_node(pos)
 	end,
 	on_player_collision = function(pos, player, gameid)
 		minetest.remove_node(pos)
@@ -111,11 +111,16 @@ minetest.register_node("mario:mushroom_green",{
 	walkable = false,
 	groups = {cracky = 3},
 	node_box = nbox,
-	on_destruct = function(pos)
-		minetest.sound_play("mario-1-up", {pos = pos,max_hear_distance = 40,gain = 10.0,})
+	on_timer = function(pos, dtime)
+		minetest.remove_node(pos)
 	end,
 	on_player_collision = function(pos, player, gameid)
 		minetest.remove_node(pos)
+		minetest.sound_play("mario-1-up", {pos = pos,max_hear_distance = 6,gain = 10.0,})
+		local gamestate = mario.games[gameid]
+		if gamestate then
+			gamestate.lives = gamestate.lives + 1
+		end
 		mario.on_player_got_mushroom(player, 15)
 	end
 })
