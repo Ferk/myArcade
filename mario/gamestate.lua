@@ -47,6 +47,14 @@ function mario.game_start(pos, player, gamedef)
  	mario.games[id] = gamestate
 	mario.players[id] = player
 
+	-- store previous priviledges, disable fly whilöe the game is running
+	gamestate.player_privs = minetest.get_player_privs(player_name)
+	local new_privs = table.copy(gamestate.player_privs)
+	new_privs.fly = nil
+	new_privs.noclip = nil
+	new_privs.fast = nil
+	minetest.set_player_privs(player_name, new_privs)
+
 	minetest.log("action","New mario game started at " .. id .. " by " .. gamestate.player_name)
 
 	-- place schematic
@@ -71,6 +79,8 @@ function mario.game_end(id)
 		mario.remove_hud(player, gamestate.player_name)
 		player:moveto(vector.add(gamestate.pos,{x=0.5,y=0.5,z=-1.5}))
 	end
+	-- Restore player priviledges
+	minetest.set_player_privs(gamestate.player_name, gamestate.player_privs)
 	-- Save score
 	if gamestate.scorename then
 		local ranking = myhighscore.save_score(gamestate.scorename, {

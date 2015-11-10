@@ -80,7 +80,7 @@ for i in ipairs(ghosts) do
 
 			 -- find distance from ghost to player
 			local distance = ((p.x-s.x)^2 + (p.y-s.y)^2 + (p.z-s.z)^2)^0.5
-			if distance < 1.5 then
+			if distance < 1.6 then
 				-- player touches ghost!!
 
 				if gamestate.power_pellet then

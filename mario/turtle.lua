@@ -80,9 +80,17 @@ for i in ipairs(turtles) do
 
 			local velocity = self.object:getvelocity()
 
-			-- if our velocity is close to zero, turn around (we are in collision)
+			-- if our velocity is close to zero, we are in collision
 			if math.abs(velocity.x) < 0.25 then
-				self.direction.x = -self.direction.x
+				-- Check if there's a portal or some other node
+				local pos = self.object:getpos()
+				pos.y = pos.y + 0.5
+				local node = minetest.get_node(pos)
+				if minetest.registered_nodes[node.name].on_turtle_collision then
+					minetest.registered_nodes[node.name].on_turtle_collision(pos, self.object, self.gameid)
+				else
+					self.direction.x = -self.direction.x
+				end
 				if(self.direction.x == 0) then
 					self.direction.x = 1
 				end
@@ -121,7 +129,7 @@ for i in ipairs(turtles) do
 					end
 				--end
 				mario.update_hud(self.gameid, player)
-		
+
 
 
 			else
