@@ -65,7 +65,7 @@ function pacmine.game_start(pos, player, gamedef)
 	-- Set start positions
 	pacmine.game_reset(id, player)
 	pacmine.update_hud(id, player)
-	minetest.sound_play("pacmine_beginning", {pos = pos,max_hear_distance = 40,gain = 10.0,})
+	minetest.sound_play("pacmine_beginning", {pos = pos,max_hear_distance = 20,gain = 10.0,})
 end
 
 -- Finish the game with the given id
@@ -205,7 +205,7 @@ function pacmine.on_player_got_pellet(player)
 
 			-- Set start positions
 			pacmine.game_reset(gamestate.id, player)
-			minetest.sound_play("pacmine_beginning", {pos = pos,max_hear_distance = 40,gain = 10.0,})
+			minetest.sound_play("pacmine_beginning", {pos = pos,max_hear_distance = 20,gain = 10.0,})
 		end)
 	end
 

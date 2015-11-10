@@ -67,7 +67,7 @@ function mario.game_start(pos, player, gamedef)
 	-- Set start positions
 	mario.game_reset(id, player)
 	mario.update_hud(id, player)
-	minetest.sound_play("mario-game-start", {pos = pos,max_hear_distance = 40,gain = 10.0,})
+	minetest.sound_play("mario-game-start", {pos = pos,max_hear_distance = 20,gain = 10.0,})
 end
 
 -- Finish the game with the given id
@@ -205,7 +205,7 @@ function mario.on_player_got_coin(player)
 
 			-- Set start positions
 			mario.game_reset(gamestate.id, player)
-			minetest.sound_play("mario-game-start", {pos = pos,max_hear_distance = 40,gain = 10.0,})
+			minetest.sound_play("mario-game-start", {pos = pos,max_hear_distance = 20,gain = 10.0,})
 		end)
 	end
 
