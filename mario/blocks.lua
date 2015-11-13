@@ -5,7 +5,7 @@ minetest.register_node("mario:platform",{
 			},
 	drawtype = "normal",
 	paramtype = "light",
-	groups = {cracky = 3},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 })
 minetest.register_node("mario:grey",{
 	description = "Grey",
@@ -15,7 +15,7 @@ minetest.register_node("mario:grey",{
 	drawtype = "normal",
 	paramtype = "light",
 	light_source = 14,
-	groups = {cracky = 3},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 })
 minetest.register_node("mario:border",{
 	description = "Border",
@@ -24,7 +24,7 @@ minetest.register_node("mario:border",{
 			},
 	drawtype = "normal",
 	paramtype = "light",
-	groups = {cracky = 3},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 })
 minetest.register_node("mario:brick",{
 	description = "Brick",
@@ -33,14 +33,14 @@ minetest.register_node("mario:brick",{
 			},
 	drawtype = "normal",
 	paramtype = "light",
-	groups = {cracky = 3},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 })
 minetest.register_node("mario:glass", {
 	description = "Glass",
 	tiles = {"mario_grey.png","mario_glass.png"},
 	drawtype = "glasslike_framed",
 	paramtype = "light",
-	groups = {cracky = 2},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 })
 minetest.register_node("mario:coin", {
 	description = "Coin",
@@ -48,7 +48,7 @@ minetest.register_node("mario:coin", {
 	drawtype = "plantlike",
 	paramtype = "light",
 	walkable = false,
-	groups = {cracky = 2},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 	on_destruct = function(pos)
 		minetest.sound_play("mario-coin", {pos = pos,max_hear_distance = 40,gain = 10.0,})
 	end,
@@ -85,7 +85,7 @@ minetest.register_node("mario:mushroom",{
 	drawtype = "nodebox",
 	paramtype = "light",
 	walkable = false,
-	groups = {cracky = 3},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 	node_box = nbox,
 	on_timer = function(pos, dtime)
 		minetest.remove_node(pos)
@@ -109,7 +109,7 @@ minetest.register_node("mario:mushroom_green",{
 	drawtype = "nodebox",
 	paramtype = "light",
 	walkable = false,
-	groups = {cracky = 3},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 	node_box = nbox,
 	on_timer = function(pos, dtime)
 		minetest.remove_node(pos)

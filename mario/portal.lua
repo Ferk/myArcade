@@ -8,7 +8,7 @@ minetest.register_node("mario:portal", {
 	paramtype2 = "facedir",
 	walkable = false,
 	is_ground_content = false,
-	groups = {cracky = 2,not_in_creative_inventory=1},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 	on_turtle_collision = function(pos, obj, gameid)
 		obj:setpos({x=pos.x,y=pos.y+12,z=pos.z})
 	end
@@ -22,7 +22,7 @@ minetest.register_node("mario:portal_left", {
 	paramtype2 = "facedir",
 	--walkable = false,
 	is_ground_content = false,
-	groups = {cracky = 2,not_in_creative_inventory=0},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 	on_player_collision = function(pos, player, gameid)
 		player:setpos(vector.add(pos,{x=31, y=0, z=0}))
 	end,
@@ -39,7 +39,7 @@ minetest.register_node("mario:portal_right", {
 	paramtype2 = "facedir",
 	--walkable = false,
 	is_ground_content = false,
-	groups = {cracky = 2,not_in_creative_inventory=0},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 	on_player_collision = function(pos, player, gameid)
 		player:setpos(vector.add(pos,{x=-31, y=0, z=0}))
 	end,

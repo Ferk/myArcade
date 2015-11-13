@@ -23,7 +23,7 @@ minetest.register_node("mario:pipe",{
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 3},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 	node_box = pipe_box,
 	on_place = minetest.rotate_node,
 	
@@ -42,7 +42,7 @@ minetest.register_node("mario:pipe_elbow",{
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 3},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 	node_box = pipe_elbow_box,
 	on_place = minetest.rotate_node,
 })
@@ -60,7 +60,7 @@ minetest.register_node("mario:pipe_end",{
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 3},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 	node_box = pipe_end_box,
 	on_place = minetest.rotate_node,
 })

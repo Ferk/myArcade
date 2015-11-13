@@ -20,7 +20,7 @@ minetest.register_node("mario:placer",{
 			},
 	drawtype = "normal",
 	paramtype = "light",
-	groups = {cracky = 3},
+	groups = {cracky = 1},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		mario.game_start(pos, player, {
 			schematic = minetest.get_modpath("mario").."/schems/mario.mts",
@@ -40,7 +40,7 @@ minetest.register_node("mario:placer2",{
 			},
 	drawtype = "normal",
 	paramtype = "light",
-	groups = {cracky = 3},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local schem = minetest.get_modpath("mario").."/schems/mario.mts"
 		minetest.place_schematic({x=pos.x-1,y=pos.y-1,z=pos.z-2},schem,0, "air", true)
@@ -59,7 +59,7 @@ minetest.register_node("mario:exit",{
 			},
 	drawtype = "normal",
 	paramtype = "light",
-	groups = {cracky = 3},
+	groups = {cracky = 1,not_in_creative_inventory=1},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local game = mario.get_game_by_player(player:get_player_name())
 		mario.game_end(game.id)
