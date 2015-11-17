@@ -5,6 +5,7 @@ minetest.register_node("mario:platform",{
 			},
 	drawtype = "normal",
 	paramtype = "light",
+	pointable = false,
 	groups = {cracky = 1,not_in_creative_inventory=1},
 })
 minetest.register_node("mario:grey",{
@@ -15,6 +16,7 @@ minetest.register_node("mario:grey",{
 	drawtype = "normal",
 	paramtype = "light",
 	light_source = 14,
+	pointable = false,
 	groups = {cracky = 1,not_in_creative_inventory=1},
 })
 minetest.register_node("mario:border",{
@@ -24,6 +26,7 @@ minetest.register_node("mario:border",{
 			},
 	drawtype = "normal",
 	paramtype = "light",
+	pointable = false,
 	groups = {cracky = 1,not_in_creative_inventory=1},
 })
 minetest.register_node("mario:brick",{
@@ -33,6 +36,7 @@ minetest.register_node("mario:brick",{
 			},
 	drawtype = "normal",
 	paramtype = "light",
+	pointable = false,
 	groups = {cracky = 1,not_in_creative_inventory=1},
 })
 minetest.register_node("mario:glass", {
@@ -40,6 +44,7 @@ minetest.register_node("mario:glass", {
 	tiles = {"mario_grey.png","mario_glass.png"},
 	drawtype = "glasslike_framed",
 	paramtype = "light",
+	pointable = false,
 	groups = {cracky = 1,not_in_creative_inventory=1},
 })
 minetest.register_node("mario:coin", {
@@ -48,6 +53,7 @@ minetest.register_node("mario:coin", {
 	drawtype = "plantlike",
 	paramtype = "light",
 	walkable = false,
+	pointable = false,
 	groups = {cracky = 1,not_in_creative_inventory=1},
 	on_destruct = function(pos)
 		minetest.sound_play("mario-coin", {pos = pos,max_hear_distance = 40,gain = 10.0,})
@@ -85,6 +91,7 @@ minetest.register_node("mario:mushroom",{
 	drawtype = "nodebox",
 	paramtype = "light",
 	walkable = false,
+	pointable = false,
 	groups = {cracky = 1,not_in_creative_inventory=1},
 	node_box = nbox,
 	on_timer = function(pos, dtime)
@@ -109,6 +116,7 @@ minetest.register_node("mario:mushroom_green",{
 	drawtype = "nodebox",
 	paramtype = "light",
 	walkable = false,
+	pointable = false,
 	groups = {cracky = 1,not_in_creative_inventory=1},
 	node_box = nbox,
 	on_timer = function(pos, dtime)
