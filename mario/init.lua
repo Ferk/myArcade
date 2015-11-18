@@ -9,7 +9,7 @@ dofile(minetest.get_modpath("mario").."/hud.lua")
 
 
 minetest.register_node("mario:placer",{
-	description = "Reset",
+	description = "Mario",
 	tiles = {
 			"mario_border.png",
 			"mario_border.png",
