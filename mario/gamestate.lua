@@ -90,6 +90,7 @@ function mario.game_end(id)
 		if ranking then
 			minetest.chat_send_player(gamestate.player_name, "You made it to the highscores! Your Ranking: " .. ranking)
 		end
+		minetest.log("action", gamestate.player_name .. " ended mario game with ".. (gamestate.score or "no") .." score at " .. minetest.pos_to_string(gamestate.pos))
 	end
 	-- Restore normal physics
 	player:set_physics_override(1,1,1,true,false)
@@ -102,7 +103,7 @@ end
 function mario.game_reset(id, player)
 	local gamestate = mario.games[id]
 	if not gamestate then return end
-	minetest.log("action", "resetting game " .. id)
+	minetest.log("action", "resetting game " .. id .. " by " .. gamestate.player_name)
 
 	-- Save the time when the game was last resetted (to solve timing issues)
 	local last_reset = os.time()
