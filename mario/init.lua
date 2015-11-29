@@ -61,8 +61,15 @@ minetest.register_node("mario:exit",{
 	paramtype = "light",
 	groups = {cracky = 1,not_in_creative_inventory=1},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
-		local game = mario.get_game_by_player(player:get_player_name())
-		mario.game_end(game.id)
+		local name = player:get_player_name()
+		local game = mario.get_game_by_player(name)
+		if not game then
+			minetest.chat_send_player(name, "You aren't running a game at the moment")
+			pos.z = pos.z - 3
+			player:moveto(pos)
+		else
+			mario.game_end(game.id)
+		end
 	end,
 })
 
