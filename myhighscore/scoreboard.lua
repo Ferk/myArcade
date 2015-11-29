@@ -80,7 +80,6 @@ minetest.register_node("myhighscore:score_board", {
 		local playername = sender:get_player_name()
 		if fields.gameid then
 			local event = minetest.explode_textlist_event(fields.gameid)
-			print(dump(fields) .. " " .. dump(event))
 			-- find which game it is
 			local i, game = 0, nil
 			repeat
