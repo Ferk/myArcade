@@ -270,7 +270,7 @@ local function on_player_gamestep(player, gameid)
 		{x=-0.5,y=0.5,z=-0.5},
 	}
 	for _,pos in pairs(positions) do
-		pos = vector.add(player_pos, pos)
+		pos = vector.round(vector.add(player_pos, pos))
 		local node = minetest.get_node(pos)
 		local nodedef = minetest.registered_nodes[node.name]
 
