@@ -23,3 +23,7 @@ If your score makes it into the highscore of the server your name will be regist
 
 * [DonBatman](https://github.com/DonBatman/)
 * [Ferk](https://github.com/Ferk/)
+
+###Licences
+* Code - MIT
+* Media - CCO
